@@ -392,7 +392,7 @@ class SignInDialog extends Component {
         onExited={this.handleExited}
       >
         <DialogTitle disableTypography>
-          <Typography variant="h6">Sign in to your account</Typography>
+          <Typography variant="h6">Sign in to HarmonyLang</Typography>
 
           <Tooltip title="Close">
             <IconButton

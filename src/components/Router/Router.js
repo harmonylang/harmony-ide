@@ -12,7 +12,7 @@ import NotFoundPage from "../NotFoundPage";
 class Router extends Component {
   render() {
     // Properties
-    const { user, roles, bar } = this.props;
+    const { user, roles, theme, bar } = this.props;
 
     // Functions
     const { openSnackbar } = this.props;
@@ -23,7 +23,7 @@ class Router extends Component {
 
         <Switch>
           <Route path="/" exact>
-            <HomePage user={user} openSnackbar={openSnackbar} />
+            <HomePage user={user} theme={theme} openSnackbar={openSnackbar} />
           </Route>
 
           <Route path="/admin">
@@ -51,6 +51,7 @@ Router.propTypes = {
   // Properties
   user: PropTypes.object,
   roles: PropTypes.array.isRequired,
+  theme: PropTypes.object.isRequired,
   bar: PropTypes.element,
 
   // Functions

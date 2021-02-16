@@ -16,7 +16,6 @@ import {
   CircularProgress,
   Badge,
   Avatar,
-  Fab,
   Button,
   List,
   ListItem,
@@ -31,7 +30,6 @@ import {
 } from "@material-ui/core";
 
 import {
-  Close as CloseIcon,
   Photo as PhotoIcon,
   CloudUpload as CloudUploadIcon,
   Person as PersonIcon,
@@ -92,8 +90,6 @@ const initialState = {
   showingField: "",
   avatar: null,
   avatarUrl: "",
-  firstName: "",
-  lastName: "",
   username: "",
   emailAddress: "",
   performingAction: false,
@@ -185,65 +181,6 @@ class AccountTab extends Component {
     );
   };
 
-  removeAvatar = () => {
-    const { user } = this.props;
-
-    const { avatar, avatarUrl } = this.state;
-
-    if (!user.photoURL && !avatar && !avatarUrl) {
-      return;
-    }
-
-    if (
-      (!user.photoURL && avatar && avatarUrl) ||
-      (user.photoURL && avatar && avatarUrl)
-    ) {
-      URL.revokeObjectURL(avatarUrl);
-
-      this.setState({
-        avatar: null,
-        avatarUrl: "",
-      });
-    } else if (user.photoURL && !avatar && !avatarUrl) {
-      this.setState(
-        {
-          performingAction: true,
-          loadingAvatar: true,
-        },
-        () => {
-          authentication
-            .removeAvatar()
-            .then((value) => {
-              const { user, userData } = this.props;
-
-              this.setState({
-                profileCompletion: authentication.getProfileCompletion({
-                  ...user,
-                  ...userData,
-                }),
-              });
-            })
-            .catch((reason) => {
-              const code = reason.code;
-              const message = reason.message;
-
-              switch (code) {
-                default:
-                  this.props.openSnackbar(message);
-                  return;
-              }
-            })
-            .finally(() => {
-              this.setState({
-                performingAction: false,
-                loadingAvatar: false,
-              });
-            });
-        }
-      );
-    }
-  };
-
   showField = (fieldId) => {
     if (!fieldId) {
       return;
@@ -258,8 +195,6 @@ class AccountTab extends Component {
     this.setState(
       {
         showingField: "",
-        firstName: "",
-        lastName: "",
         username: "",
         emailAddress: "",
         errors: null,
@@ -268,154 +203,6 @@ class AccountTab extends Component {
         if (callback && typeof callback === "function") {
           callback();
         }
-      }
-    );
-  };
-
-  changeFirstName = () => {
-    const { firstName } = this.state;
-
-    const errors = validate(
-      {
-        firstName: firstName,
-      },
-      {
-        firstName: constraints.firstName,
-      }
-    );
-
-    if (errors) {
-      this.setState({
-        errors: errors,
-      });
-
-      return;
-    }
-
-    this.setState(
-      {
-        errors: null,
-      },
-      () => {
-        const { userData } = this.props;
-
-        if (firstName === userData.firstName) {
-          return;
-        }
-
-        this.setState(
-          {
-            performingAction: true,
-          },
-          () => {
-            authentication
-              .changeFirstName(firstName)
-              .then(() => {
-                const { user, userData } = this.props;
-
-                this.setState(
-                  {
-                    profileCompletion: authentication.getProfileCompletion({
-                      ...user,
-                      ...userData,
-                    }),
-                  },
-                  () => {
-                    this.hideFields();
-                  }
-                );
-              })
-              .catch((reason) => {
-                const code = reason.code;
-                const message = reason.message;
-
-                switch (code) {
-                  default:
-                    this.props.openSnackbar(message);
-                    return;
-                }
-              })
-              .finally(() => {
-                this.setState({
-                  performingAction: false,
-                });
-              });
-          }
-        );
-      }
-    );
-  };
-
-  changeLastName = () => {
-    const { lastName } = this.state;
-
-    const errors = validate(
-      {
-        lastName: lastName,
-      },
-      {
-        lastName: constraints.lastName,
-      }
-    );
-
-    if (errors) {
-      this.setState({
-        errors: errors,
-      });
-
-      return;
-    }
-
-    this.setState(
-      {
-        errors: null,
-      },
-      () => {
-        const { userData } = this.props;
-
-        if (lastName === userData.lastName) {
-          return;
-        }
-
-        this.setState(
-          {
-            performingAction: true,
-          },
-          () => {
-            authentication
-              .changeLastName(lastName)
-              .then(() => {
-                const { user, userData } = this.props;
-
-                this.setState(
-                  {
-                    profileCompletion: authentication.getProfileCompletion({
-                      ...user,
-                      ...userData,
-                    }),
-                  },
-                  () => {
-                    this.hideFields();
-                  }
-                );
-              })
-              .catch((reason) => {
-                const code = reason.code;
-                const message = reason.message;
-
-                switch (code) {
-                  default:
-                    this.props.openSnackbar(message);
-                    return;
-                }
-              })
-              .finally(() => {
-                this.setState({
-                  performingAction: false,
-                });
-              });
-          }
-        );
       }
     );
   };
@@ -607,14 +394,6 @@ class AccountTab extends Component {
 
   changeField = (fieldId) => {
     switch (fieldId) {
-      case "first-name":
-        this.changeFirstName();
-        return;
-
-      case "last-name":
-        this.changeLastName();
-        return;
-
       case "username":
         this.changeUsername();
         return;
@@ -689,30 +468,6 @@ class AccountTab extends Component {
     });
   };
 
-  handleFirstNameChange = (event) => {
-    if (!event) {
-      return;
-    }
-
-    const firstName = event.target.value;
-
-    this.setState({
-      firstName: firstName,
-    });
-  };
-
-  handleLastNameChange = (event) => {
-    if (!event) {
-      return;
-    }
-
-    const lastName = event.target.value;
-
-    this.setState({
-      lastName: lastName,
-    });
-  };
-
   handleUsernameChange = (event) => {
     if (!event) {
       return;
@@ -755,16 +510,12 @@ class AccountTab extends Component {
       loadingAvatar,
       avatar,
       avatarUrl,
-      firstName,
-      lastName,
       username,
       emailAddress,
       sentVerificationEmail,
       errors,
     } = this.state;
 
-    const hasFirstName = userData && userData.firstName;
-    const hasLastName = userData && userData.lastName;
     const hasUsername = userData && userData.username;
 
     return (
@@ -778,19 +529,6 @@ class AccountTab extends Component {
                     {avatar && avatarUrl && (
                       <Badge
                         classes={{ badge: classes.badge }}
-                        badgeContent={
-                          <Tooltip title="Remove">
-                            <Fab
-                              classes={{ sizeSmall: classes.small }}
-                              color="secondary"
-                              disabled={performingAction}
-                              size="small"
-                              onClick={this.removeAvatar}
-                            >
-                              <CloseIcon fontSize="small" />
-                            </Fab>
-                          </Tooltip>
-                        }
                       >
                         {loadingAvatar && (
                           <Badge
@@ -828,19 +566,6 @@ class AccountTab extends Component {
                         {user.photoURL && (
                           <Badge
                             classes={{ badge: classes.badge }}
-                            badgeContent={
-                              <Tooltip title="Remove">
-                                <Fab
-                                  classes={{ sizeSmall: classes.small }}
-                                  color="secondary"
-                                  disabled={performingAction}
-                                  size="small"
-                                  onClick={this.removeAvatar}
-                                >
-                                  <CloseIcon fontSize="small" />
-                                </Fab>
-                              </Tooltip>
-                            }
                           >
                             {loadingAvatar && (
                               <Badge
@@ -913,10 +638,9 @@ class AccountTab extends Component {
 
                   {avatar && avatarUrl && (
                     <Button
-                      color="primary"
                       disabled={performingAction}
                       startIcon={<CloudUploadIcon />}
-                      variant="contained"
+                      variant="outlined"
                       onClick={this.uploadAvatar}
                     >
                       Upload
@@ -935,64 +659,15 @@ class AccountTab extends Component {
 
                       <label htmlFor="avatar-input">
                         <Button
-                          color="primary"
                           component="span"
                           disabled={performingAction}
                           startIcon={<PhotoIcon />}
-                          variant="contained"
+                          variant="outlined"
                         >
                           Choose...
                         </Button>
                       </label>
                     </>
-                  )}
-                </Box>
-              </Grid>
-
-              <Grid item xs>
-                <Box textAlign="center">
-                  <Typography variant="body1">Profile Completion</Typography>
-
-                  {profileCompletion === 0 && (
-                    <Typography color="error" variant="h5">
-                      {profileCompletion}%
-                    </Typography>
-                  )}
-
-                  {profileCompletion === 100 && (
-                    <Typography color="primary" variant="h5">
-                      {profileCompletion}%
-                    </Typography>
-                  )}
-
-                  {profileCompletion !== 0 && profileCompletion !== 100 && (
-                    <Typography color="secondary" variant="h5">
-                      {profileCompletion}%
-                    </Typography>
-                  )}
-                </Box>
-              </Grid>
-
-              <Grid item xs>
-                <Box textAlign="center">
-                  <Typography variant="body1">Security Rating</Typography>
-
-                  {securityRating === 0 && (
-                    <Typography color="error" variant="h5">
-                      {securityRating}%
-                    </Typography>
-                  )}
-
-                  {securityRating === 100 && (
-                    <Typography color="primary" variant="h5">
-                      {securityRating}%
-                    </Typography>
-                  )}
-
-                  {securityRating !== 0 && securityRating !== 100 && (
-                    <Typography color="secondary" variant="h5">
-                      {securityRating}%
-                    </Typography>
                   )}
                 </Box>
               </Grid>
@@ -1005,19 +680,6 @@ class AccountTab extends Component {
                 {avatar && avatarUrl && (
                   <Badge
                     classes={{ badge: classes.badge }}
-                    badgeContent={
-                      <Tooltip title="Remove">
-                        <Fab
-                          classes={{ sizeSmall: classes.small }}
-                          color="secondary"
-                          disabled={performingAction}
-                          size="small"
-                          onClick={this.removeAvatar}
-                        >
-                          <CloseIcon fontSize="small" />
-                        </Fab>
-                      </Tooltip>
-                    }
                   >
                     {loadingAvatar && (
                       <Badge
@@ -1055,19 +717,6 @@ class AccountTab extends Component {
                     {user.photoURL && (
                       <Badge
                         classes={{ badge: classes.badge }}
-                        badgeContent={
-                          <Tooltip title="Remove">
-                            <Fab
-                              classes={{ sizeSmall: classes.small }}
-                              color="secondary"
-                              disabled={performingAction}
-                              size="small"
-                              onClick={this.removeAvatar}
-                            >
-                              <CloseIcon fontSize="small" />
-                            </Fab>
-                          </Tooltip>
-                        }
                       >
                         {loadingAvatar && (
                           <Badge
@@ -1128,10 +777,9 @@ class AccountTab extends Component {
 
               {avatar && avatarUrl && (
                 <Button
-                  color="primary"
                   disabled={performingAction}
                   startIcon={<CloudUploadIcon />}
-                  variant="contained"
+                  variant="outlined"
                   onClick={this.uploadAvatar}
                 >
                   Upload
@@ -1150,11 +798,10 @@ class AccountTab extends Component {
 
                   <label htmlFor="avatar-input">
                     <Button
-                      color="primary"
                       component="span"
                       disabled={performingAction}
                       startIcon={<PhotoIcon />}
-                      variant="contained"
+                      variant="outlined"
                     >
                       Choose...
                     </Button>
@@ -1216,166 +863,6 @@ class AccountTab extends Component {
         </Box>
 
         <List disablePadding>
-          <ListItem>
-            <Hidden xsDown>
-              <ListItemIcon>
-                <PersonIcon />
-              </ListItemIcon>
-            </Hidden>
-
-            {!hasFirstName && (
-              <ListItemIcon>
-                <Tooltip title="No first name">
-                  <WarningIcon color="error" />
-                </Tooltip>
-              </ListItemIcon>
-            )}
-
-            {showingField === "first-name" && (
-              <TextField
-                autoComplete="given-name"
-                autoFocus
-                disabled={performingAction}
-                error={!!(errors && errors.firstName)}
-                fullWidth
-                helperText={
-                  errors && errors.firstName
-                    ? errors.firstName[0]
-                    : "Press Enter to change your first name"
-                }
-                label="First name"
-                placeholder={hasFirstName && userData.firstName}
-                required
-                type="text"
-                value={firstName}
-                variant="filled"
-                InputLabelProps={{ required: false }}
-                onBlur={this.hideFields}
-                onKeyDown={(event) => this.handleKeyDown(event, "first-name")}
-                onChange={this.handleFirstNameChange}
-              />
-            )}
-
-            {showingField !== "first-name" && (
-              <>
-                <ListItemText
-                  primary="First name"
-                  secondary={
-                    hasFirstName
-                      ? userData.firstName
-                      : "You don’t have a first name"
-                  }
-                />
-
-                <ListItemSecondaryAction>
-                  {hasFirstName && (
-                    <Tooltip title="Change">
-                      <div>
-                        <IconButton
-                          disabled={performingAction}
-                          onClick={() => this.showField("first-name")}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </div>
-                    </Tooltip>
-                  )}
-
-                  {!hasFirstName && (
-                    <Button
-                      color="primary"
-                      disabled={performingAction}
-                      variant="contained"
-                      onClick={() => this.showField("first-name")}
-                    >
-                      Add
-                    </Button>
-                  )}
-                </ListItemSecondaryAction>
-              </>
-            )}
-          </ListItem>
-
-          <ListItem>
-            <Hidden xsDown>
-              <ListItemIcon>
-                <PersonIcon />
-              </ListItemIcon>
-            </Hidden>
-
-            {!hasLastName && (
-              <ListItemIcon>
-                <Tooltip title="No last name">
-                  <WarningIcon color="error" />
-                </Tooltip>
-              </ListItemIcon>
-            )}
-
-            {showingField === "last-name" && (
-              <TextField
-                autoComplete="family-name"
-                autoFocus
-                disabled={performingAction}
-                error={!!(errors && errors.lastName)}
-                fullWidth
-                helperText={
-                  errors && errors.lastName
-                    ? errors.lastName[0]
-                    : "Press Enter to change your last name"
-                }
-                label="Last name"
-                placeholder={hasLastName && userData.lastName}
-                required
-                type="text"
-                value={lastName}
-                variant="filled"
-                InputLabelProps={{ required: false }}
-                onBlur={this.hideFields}
-                onKeyDown={(event) => this.handleKeyDown(event, "last-name")}
-                onChange={this.handleLastNameChange}
-              />
-            )}
-
-            {showingField !== "last-name" && (
-              <>
-                <ListItemText
-                  primary="Last name"
-                  secondary={
-                    hasLastName
-                      ? userData.lastName
-                      : "You don’t have a last name"
-                  }
-                />
-
-                <ListItemSecondaryAction>
-                  {hasLastName && (
-                    <Tooltip title="Change">
-                      <div>
-                        <IconButton
-                          disabled={performingAction}
-                          onClick={() => this.showField("last-name")}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                      </div>
-                    </Tooltip>
-                  )}
-
-                  {!hasLastName && (
-                    <Button
-                      color="primary"
-                      disabled={performingAction}
-                      variant="contained"
-                      onClick={() => this.showField("last-name")}
-                    >
-                      Add
-                    </Button>
-                  )}
-                </ListItemSecondaryAction>
-              </>
-            )}
-          </ListItem>
-
           <ListItem>
             <Hidden xsDown>
               <ListItemIcon>

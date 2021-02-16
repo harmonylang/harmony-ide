@@ -2,6 +2,8 @@ import React, { Component } from "react";
 
 import PropTypes from "prop-types";
 
+import { withStyles } from '@material-ui/styles';
+
 import { Link as RouterLink } from "react-router-dom";
 
 import {
@@ -19,6 +21,13 @@ import {
 } from "@material-ui/core";
 
 import UserAvatar from "../UserAvatar";
+import { ReactComponent as HarmonyLogo } from "../../illustrations/ic_harmony.svg";
+
+const styles = theme => ({
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+  }
+});
 
 class Bar extends Component {
   constructor(props) {
@@ -51,7 +60,7 @@ class Bar extends Component {
 
   render() {
     // Properties
-    const { performingAction, user, userData, roles } = this.props;
+    const { performingAction, user, userData, roles, classes } = this.props;
 
     // Events
     const {
@@ -85,19 +94,23 @@ class Bar extends Component {
     ];
 
     return (
-      <AppBar color="primary" position="static">
+      <AppBar color="default" position="fixed" className={classes.appBar}>
         <Toolbar>
           <Box display="flex" flexGrow={1}>
-            <Typography color="inherit" variant="h6">
-              <Link
-                color="inherit"
-                component={RouterLink}
-                to="/"
-                underline="none"
-              >
-                {process.env.REACT_APP_TITLE}
-              </Link>
+            <Link
+              color="inherit"
+              component={RouterLink}
+              to="/"
+              underline="none"
+            >
+              <HarmonyLogo height={`2.5em`} />
+            </Link>
+            <Box ml={2}>
+              <Typography color="inherit" variant="h6">
+              {process.env.REACT_APP_TITLE}
             </Typography>
+            </Box>
+            
           </Box>
 
           {user && (
@@ -205,6 +218,7 @@ Bar.propTypes = {
   performingAction: PropTypes.bool.isRequired,
   user: PropTypes.object,
   userData: PropTypes.object,
+  classes: PropTypes.object.isRequired,
 
   // Events
   onAboutClick: PropTypes.func.isRequired,
@@ -212,4 +226,4 @@ Bar.propTypes = {
   onSignOutClick: PropTypes.func.isRequired,
 };
 
-export default Bar;
+export default withStyles(styles)(Bar);

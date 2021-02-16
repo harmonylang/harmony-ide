@@ -4,100 +4,94 @@ import PropTypes from "prop-types";
 
 import { withRouter } from "react-router-dom";
 
-import { auth } from "../../firebase";
-
-import authentication from "../../services/authentication";
-
 import EmptyState from "../EmptyState";
 
-import { ReactComponent as CabinIllustration } from "../../illustrations/cabin.svg";
+import Editor, { DiffEditor, useMonaco, loader } from "@monaco-editor/react";
+
+import { withStyles } from '@material-ui/styles';
+import { Box, Drawer, Divider, List, ListItem, ListItemText, ListItemIcon, Toolbar } from "@material-ui/core";
+import { Description as FileIcon, Add as AddIcon } from "@material-ui/icons"
+
 import { ReactComponent as InsertBlockIllustration } from "../../illustrations/insert-block.svg";
 
+const drawerWidth = 240;
+
+const styles = theme => ({
+  root: {
+    display: 'flex',
+    height: '100vh',
+    width: '100vw'
+  },
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+  },
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+  },
+  drawerPaper: {
+    width: drawerWidth,
+  },
+  drawerContainer: {
+    overflow: 'auto',
+  },
+  content: {
+    flexGrow: 1,
+    display: 'flex',
+    width: `calc(100% - ${drawerWidth})`,
+    padding: theme.spacing(0),
+  }
+});
+
+
 class HomePage extends Component {
-  signInWithEmailLink = () => {
-    const { user } = this.props;
-
-    if (user) {
-      return;
-    }
-
-    const emailLink = window.location.href;
-
-    if (!emailLink) {
-      return;
-    }
-
-    if (auth.isSignInWithEmailLink(emailLink)) {
-      let emailAddress = localStorage.getItem("emailAddress");
-
-      if (!emailAddress) {
-        this.props.history.push("/");
-
-        return;
-      }
-
-      authentication
-        .signInWithEmailLink(emailAddress, emailLink)
-        .then((value) => {
-          const user = value.user;
-          const displayName = user.displayName;
-          const emailAddress = user.email;
-
-          this.props.openSnackbar(
-            `Signed in as ${displayName || emailAddress}`
-          );
-        })
-        .catch((reason) => {
-          const code = reason.code;
-          const message = reason.message;
-
-          switch (code) {
-            case "auth/expired-action-code":
-            case "auth/invalid-email":
-            case "auth/user-disabled":
-              this.props.openSnackbar(message);
-              break;
-
-            default:
-              this.props.openSnackbar(message);
-              return;
-          }
-        })
-        .finally(() => {
-          this.props.history.push("/");
-        });
-    }
-  };
-
   render() {
-    const { user } = this.props;
-
-    if (user) {
-      return (
-        <EmptyState
-          image={<CabinIllustration />}
-          title="Home"
-          description="This is the home page. You can edit it from HomePage.js."
-        />
-      );
-    }
+    const { classes, theme } = this.props;
 
     return (
-      <EmptyState
-        image={<InsertBlockIllustration />}
-        title="RMUIF"
-        description="Supercharged version of Create React App with all the bells and whistles."
-      />
+      <Box className={classes.root}>
+        <Drawer
+          className={classes.drawer}
+          variant="permanent"
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+        >
+          <Toolbar />
+          <div className={classes.drawerContainer}>
+            <List>
+              {['diners.hny', 'peterson.hny', 'dinersAvoid.hny', 'New File'].map((text, index, arr) => (
+                <ListItem button key={text}>
+                  <ListItemIcon>{arr.length - 1 === index ? <AddIcon /> : <FileIcon />}</ListItemIcon>
+                  <ListItemText primary={text} />
+                </ListItem>
+              ))}
+            </List>
+          </div>
+        </Drawer>
+        <Box className={classes.content}>
+          <Box flexGrow={1} mt={8} overflow={'hidden'}>
+            <EmptyState
+              image={<InsertBlockIllustration />}
+              title="RMUIF"
+              description="Supercharged version of Create React App with all the bells and whistles."
+            />
+            <Editor
+              theme={theme.dark ? "vs-dark" : "light"}
+              defaultLanguage="javascript"
+              defaultValue="// some comment"
+            />
+          </Box>
+        </Box>
+      </Box >
     );
-  }
-
-  componentDidMount() {
-    this.signInWithEmailLink();
   }
 }
 
 HomePage.propTypes = {
   user: PropTypes.object,
+  theme: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
-export default withRouter(HomePage);
+export default withStyles(styles)(withRouter(HomePage));
