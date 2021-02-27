@@ -20,6 +20,11 @@ import {
   Link,
 } from "@material-ui/core";
 
+import {
+  PlayArrow as RunIcon,
+  Save as SaveIcon
+} from "@material-ui/icons";
+
 import UserAvatar from "../UserAvatar";
 import { ReactComponent as HarmonyLogo } from "../../illustrations/ic_harmony.svg";
 
@@ -113,6 +118,13 @@ class Bar extends Component {
             
           </Box>
 
+          <Box mr={2}>
+            <ButtonGroup color="default" aria-label="outlined secondary button group">
+              <Button><RunIcon /></Button>
+              <Button><SaveIcon /></Button>
+            </ButtonGroup>
+          </Box>
+          
           {user && (
             <>
               {roles.includes("admin") && (

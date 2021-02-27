@@ -445,6 +445,7 @@ class App extends Component {
                       userData: data,
                       roles: value || [],
                     });
+                    console.log(data);
                   });
                 })
                 .catch((reason) => {

@@ -9,7 +9,7 @@ import EmptyState from "../EmptyState";
 import Editor, { DiffEditor, useMonaco, loader } from "@monaco-editor/react";
 
 import { withStyles } from '@material-ui/styles';
-import { Box, Drawer, Divider, List, ListItem, ListItemText, ListItemIcon, Toolbar } from "@material-ui/core";
+import { Box, Drawer, List, ListItem, ListItemText, ListItemIcon, Toolbar } from "@material-ui/core";
 import { Description as FileIcon, Add as AddIcon } from "@material-ui/icons"
 
 import { ReactComponent as InsertBlockIllustration } from "../../illustrations/insert-block.svg";
@@ -78,8 +78,8 @@ class HomePage extends Component {
             />
             <Editor
               theme={theme.dark ? "vs-dark" : "light"}
-              defaultLanguage="javascript"
-              defaultValue="// some comment"
+              defaultLanguage="python"
+              defaultValue=""
             />
           </Box>
         </Box>
