@@ -6,13 +6,15 @@ import { withRouter } from "react-router-dom";
 
 import EmptyState from "../EmptyState";
 
-import Editor, { DiffEditor, useMonaco, loader } from "@monaco-editor/react";
+import Editor from "@monaco-editor/react";
 
 import { withStyles } from '@material-ui/styles';
 import { Box, Drawer, List, ListItem, ListItemText, ListItemIcon, Toolbar } from "@material-ui/core";
-import { Description as FileIcon, Add as AddIcon } from "@material-ui/icons"
+import { Description as FileIcon, Add as AddIcon } from "@material-ui/icons";
 
 import { ReactComponent as InsertBlockIllustration } from "../../illustrations/insert-block.svg";
+
+import HarmonyMonarch from "./HarmonyMonarch";
 
 const drawerWidth = 240;
 
@@ -45,8 +47,15 @@ const styles = theme => ({
 
 
 class HomePage extends Component {
+  handleEditorHarmonyCustomLang(monaco) {
+    monaco.languages.register({
+      id: 'harmony'
+    })
+    monaco.languages.setMonarchTokensProvider('harmony', HarmonyMonarch);
+  }
+
   render() {
-    const { classes, theme } = this.props;
+    const { classes, theme, handleEditorChange } = this.props;
 
     return (
       <Box className={classes.root}>
@@ -78,8 +87,10 @@ class HomePage extends Component {
             />
             <Editor
               theme={theme.dark ? "vs-dark" : "light"}
-              defaultLanguage="python"
+              defaultLanguage="harmony"
+              beforeMount={this.handleEditorHarmonyCustomLang}
               defaultValue=""
+              onChange={handleEditorChange}
             />
           </Box>
         </Box>

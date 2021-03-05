@@ -69,6 +69,7 @@ class Bar extends Component {
 
     // Events
     const {
+      onRunHarmony,
       onAboutClick,
       onSettingsClick,
       onSignOutClick,
@@ -120,7 +121,7 @@ class Bar extends Component {
 
           <Box mr={2}>
             <ButtonGroup color="default" aria-label="outlined secondary button group">
-              <Button><RunIcon /></Button>
+              <Button><RunIcon onClick={onRunHarmony}/></Button>
               <Button><SaveIcon /></Button>
             </ButtonGroup>
           </Box>
