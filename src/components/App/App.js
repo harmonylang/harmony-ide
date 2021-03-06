@@ -22,6 +22,7 @@ const initialState = {
   theme: appearance.defaultTheme,
   user: null,
   userData: null,
+  editorValue: '',
   roles: [],
 
   aboutDialog: {
@@ -73,6 +74,14 @@ class App extends Component {
       },
       callback
     )
+  }
+
+  updateEditorValue = (value, event) => {
+    this.setState({ editorValue: value })
+  }
+
+  runHarmonyAnalysis = () => {
+    console.log('Running ' + this.state.editorValue)
   }
 
   setTheme = (theme, callback) => {
@@ -269,6 +278,7 @@ class App extends Component {
                 user={user}
                 roles={roles}
                 theme={theme}
+                handleEditorChange={this.updateEditorValue}
                 bar={
                   <Bar
                     performingAction={performingAction}
@@ -276,6 +286,7 @@ class App extends Component {
                     user={user}
                     userData={userData}
                     roles={roles}
+                    onRunHarmony={this.runHarmonyAnalysis}
                     onSignUpClick={() => this.openDialog('signUpDialog')}
                     onSignInClick={() => this.openDialog('signInDialog')}
                     onAboutClick={() => this.openDialog('aboutDialog')}
@@ -438,7 +449,6 @@ class App extends Component {
                       userData: data,
                       roles: value || [],
                     })
-                    console.log(data)
                   })
                 })
                 .catch((reason) => {

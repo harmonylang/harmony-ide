@@ -66,6 +66,7 @@ class Bar extends Component {
 
     // Events
     const {
+      onRunHarmony,
       onAboutClick,
       onSettingsClick,
       onSignOutClick,
@@ -120,7 +121,7 @@ class Bar extends Component {
               aria-label="outlined secondary button group"
             >
               <Button>
-                <RunIcon />
+                <RunIcon onClick={onRunHarmony} />
               </Button>
               <Button>
                 <SaveIcon />
