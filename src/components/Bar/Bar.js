@@ -1,10 +1,10 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
-import { withStyles } from '@material-ui/styles';
+import { withStyles } from '@material-ui/styles'
 
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink } from 'react-router-dom'
 
 import {
   AppBar,
@@ -18,54 +18,51 @@ import {
   Menu,
   MenuItem,
   Link,
-} from "@material-ui/core";
+} from '@material-ui/core'
 
-import {
-  PlayArrow as RunIcon,
-  Save as SaveIcon
-} from "@material-ui/icons";
+import { PlayArrow as RunIcon, Save as SaveIcon } from '@material-ui/icons'
 
-import UserAvatar from "../UserAvatar";
-import { ReactComponent as HarmonyLogo } from "../../illustrations/ic_harmony.svg";
+import UserAvatar from '../UserAvatar'
+import { ReactComponent as HarmonyLogo } from '../../illustrations/ic_harmony.svg'
 
-const styles = theme => ({
+const styles = (theme) => ({
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
-  }
-});
+  },
+})
 
 class Bar extends Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       menu: {
         anchorEl: null,
       },
-    };
+    }
   }
 
   openMenu = (event) => {
-    const anchorEl = event.currentTarget;
+    const anchorEl = event.currentTarget
 
     this.setState({
       menu: {
         anchorEl,
       },
-    });
-  };
+    })
+  }
 
   closeMenu = () => {
     this.setState({
       menu: {
         anchorEl: null,
       },
-    });
-  };
+    })
+  }
 
   render() {
     // Properties
-    const { performingAction, user, userData, roles, classes } = this.props;
+    const { performingAction, user, userData, roles, classes } = this.props
 
     // Events
     const {
@@ -74,29 +71,29 @@ class Bar extends Component {
       onSignOutClick,
       onSignUpClick,
       onSignInClick,
-    } = this.props;
+    } = this.props
 
-    const { menu } = this.state;
+    const { menu } = this.state
 
     const menuItems = [
       {
-        name: "About",
+        name: 'About',
         onClick: onAboutClick,
       },
       {
-        name: "Profile",
+        name: 'Profile',
         to: user ? `/user/${user.uid}` : null,
       },
       {
-        name: "Settings",
+        name: 'Settings',
         onClick: onSettingsClick,
       },
       {
-        name: "Sign out",
+        name: 'Sign out',
         divide: true,
         onClick: onSignOutClick,
       },
-    ];
+    ]
 
     return (
       <AppBar color="default" position="fixed" className={classes.appBar}>
@@ -112,22 +109,28 @@ class Bar extends Component {
             </Link>
             <Box ml={2}>
               <Typography color="inherit" variant="h6">
-              {process.env.REACT_APP_TITLE}
-            </Typography>
+                {process.env.REACT_APP_TITLE}
+              </Typography>
             </Box>
-            
           </Box>
 
           <Box mr={2}>
-            <ButtonGroup color="default" aria-label="outlined secondary button group">
-              <Button><RunIcon /></Button>
-              <Button><SaveIcon /></Button>
+            <ButtonGroup
+              color="default"
+              aria-label="outlined secondary button group"
+            >
+              <Button>
+                <RunIcon />
+              </Button>
+              <Button>
+                <SaveIcon />
+              </Button>
             </ButtonGroup>
           </Box>
-          
+
           {user && (
             <>
-              {roles.includes("admin") && (
+              {roles.includes('admin') && (
                 <Box mr={1}>
                   <Button
                     color="inherit"
@@ -155,13 +158,13 @@ class Bar extends Component {
               >
                 {menuItems.map((menuItem, index) => {
                   if (
-                    menuItem.hasOwnProperty("condition") &&
+                    menuItem.hasOwnProperty('condition') &&
                     !menuItem.condition
                   ) {
-                    return null;
+                    return null
                   }
 
-                  let component = null;
+                  let component = null
 
                   if (menuItem.to) {
                     component = (
@@ -173,20 +176,20 @@ class Bar extends Component {
                       >
                         {menuItem.name}
                       </MenuItem>
-                    );
+                    )
                   } else {
                     component = (
                       <MenuItem
                         key={index}
                         onClick={() => {
-                          this.closeMenu();
+                          this.closeMenu()
 
-                          menuItem.onClick();
+                          menuItem.onClick()
                         }}
                       >
                         {menuItem.name}
                       </MenuItem>
-                    );
+                    )
                   }
 
                   if (menuItem.divide) {
@@ -196,10 +199,10 @@ class Bar extends Component {
 
                         {component}
                       </span>
-                    );
+                    )
                   }
 
-                  return component;
+                  return component
                 })}
               </Menu>
             </>
@@ -217,13 +220,13 @@ class Bar extends Component {
           )}
         </Toolbar>
       </AppBar>
-    );
+    )
   }
 }
 
 Bar.defaultProps = {
   performingAction: false,
-};
+}
 
 Bar.propTypes = {
   // Properties
@@ -236,6 +239,6 @@ Bar.propTypes = {
   onAboutClick: PropTypes.func.isRequired,
   onSettingsClick: PropTypes.func.isRequired,
   onSignOutClick: PropTypes.func.isRequired,
-};
+}
 
-export default withStyles(styles)(Bar);
+export default withStyles(styles)(Bar)

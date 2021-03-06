@@ -1,21 +1,21 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
-import { Dialog, DialogTitle, DialogActions } from "@material-ui/core";
+import { Dialog, DialogTitle, DialogActions } from '@material-ui/core'
 
 class ConfirmationDialog extends Component {
   render() {
     // Dialog Properties
-    const { dialogProps } = this.props;
+    const { dialogProps } = this.props
 
     // Custom Properties
-    const { title, content, dismissiveAction, confirmingAction } = this.props;
+    const { title, content, dismissiveAction, confirmingAction } = this.props
 
     if (!dismissiveAction || !confirmingAction) {
-      console.error("Provide confirmation and dismissive buttons.");
+      console.error('Provide confirmation and dismissive buttons.')
 
-      return null;
+      return null
     }
 
     return (
@@ -29,7 +29,7 @@ class ConfirmationDialog extends Component {
           {confirmingAction}
         </DialogActions>
       </Dialog>
-    );
+    )
   }
 }
 
@@ -42,6 +42,6 @@ ConfirmationDialog.propTypes = {
   content: PropTypes.element.isRequired,
   dismissiveAction: PropTypes.element.isRequired,
   confirmingAction: PropTypes.element.isRequired,
-};
+}
 
-export default ConfirmationDialog;
+export default ConfirmationDialog

@@ -1,8 +1,8 @@
-import camelCase from "camelcase";
+import camelCase from 'camelcase'
 
-import { createMuiTheme } from "@material-ui/core/styles";
+import { createMuiTheme } from '@material-ui/core/styles'
 
-import firebase, { analytics, auth, firestore } from "../firebase";
+import firebase, { analytics, auth, firestore } from '../firebase'
 
 import {
   red,
@@ -24,165 +24,165 @@ import {
   brown,
   grey as gray,
   blueGrey as blueGray,
-} from "@material-ui/core/colors";
+} from '@material-ui/core/colors'
 
 const colors = {
   red: {
-    id: "red",
-    name: "Red",
+    id: 'red',
+    name: 'Red',
     import: red,
   },
 
   pink: {
-    id: "pink",
-    name: "Pink",
+    id: 'pink',
+    name: 'Pink',
     import: pink,
   },
 
   purple: {
-    id: "purple",
-    name: "Purple",
+    id: 'purple',
+    name: 'Purple',
     import: purple,
   },
 
   deepPurple: {
-    id: "deep-purple",
-    name: "Deep Purple",
+    id: 'deep-purple',
+    name: 'Deep Purple',
     import: deepPurple,
   },
 
   indigo: {
-    id: "indigo",
-    name: "Indigo",
+    id: 'indigo',
+    name: 'Indigo',
     import: indigo,
   },
 
   blue: {
-    id: "blue",
-    name: "Blue",
+    id: 'blue',
+    name: 'Blue',
     import: blue,
   },
 
   lightBlue: {
-    id: "light-blue",
-    name: "Light Blue",
+    id: 'light-blue',
+    name: 'Light Blue',
     import: lightBlue,
   },
 
   cyan: {
-    id: "cyan",
-    name: "Cyan",
+    id: 'cyan',
+    name: 'Cyan',
     import: cyan,
   },
 
   teal: {
-    id: "teal",
-    name: "Teal",
+    id: 'teal',
+    name: 'Teal',
     import: teal,
   },
 
   green: {
-    id: "green",
-    name: "Green",
+    id: 'green',
+    name: 'Green',
     import: green,
   },
 
   lightGreen: {
-    id: "light-green",
-    name: "Light Green",
+    id: 'light-green',
+    name: 'Light Green',
     import: lightGreen,
   },
 
   lime: {
-    id: "lime",
-    name: "Lime",
+    id: 'lime',
+    name: 'Lime',
     import: lime,
   },
 
   yellow: {
-    id: "yellow",
-    name: "Yellow",
+    id: 'yellow',
+    name: 'Yellow',
     import: yellow,
   },
 
   amber: {
-    id: "amber",
-    name: "Amber",
+    id: 'amber',
+    name: 'Amber',
     import: amber,
   },
 
   orange: {
-    id: "orange",
-    name: "Orange",
+    id: 'orange',
+    name: 'Orange',
     import: orange,
   },
 
   deepOrange: {
-    id: "deep-orange",
-    name: "Deep Orange",
+    id: 'deep-orange',
+    name: 'Deep Orange',
     import: deepOrange,
   },
 
   brown: {
-    id: "brown",
-    name: "Brown",
+    id: 'brown',
+    name: 'Brown',
     import: brown,
   },
 
   gray: {
-    id: "gray",
-    name: "Gray",
+    id: 'gray',
+    name: 'Gray',
     import: gray,
   },
 
   blueGray: {
-    id: "blue-gray",
-    name: "Blue Gray",
+    id: 'blue-gray',
+    name: 'Blue Gray',
     import: blueGray,
   },
-};
+}
 
 const getColor = (colorId) => {
   if (!colorId) {
-    return null;
+    return null
   }
 
-  colorId = camelCase(colorId);
+  colorId = camelCase(colorId)
 
-  return colors[colorId];
-};
+  return colors[colorId]
+}
 
-const defaultPrimaryColor = getColor(process.env.REACT_APP_THEME_PRIMARY_COLOR);
+const defaultPrimaryColor = getColor(process.env.REACT_APP_THEME_PRIMARY_COLOR)
 const defaultSecondaryColor = getColor(
   process.env.REACT_APP_THEME_SECONDARY_COLOR
-);
-const defaultDark = process.env.REACT_APP_THEME_DARK === "true";
+)
+const defaultDark = process.env.REACT_APP_THEME_DARK === 'true'
 
 const defaultTheme = createMuiTheme({
   palette: {
     primary: defaultPrimaryColor.import,
     secondary: defaultSecondaryColor.import,
-    type: defaultDark ? "dark" : "light",
+    type: defaultDark ? 'dark' : 'light',
   },
 
   primaryColor: defaultPrimaryColor,
   secondaryColor: defaultSecondaryColor,
   dark: defaultDark,
-});
+})
 
-const appearance = {};
+const appearance = {}
 
-appearance.colors = colors;
+appearance.colors = colors
 
-appearance.defaultPrimaryColor = defaultPrimaryColor;
-appearance.defaultSecondaryColor = defaultSecondaryColor;
-appearance.defaultDark = defaultDark;
+appearance.defaultPrimaryColor = defaultPrimaryColor
+appearance.defaultSecondaryColor = defaultSecondaryColor
+appearance.defaultDark = defaultDark
 
-appearance.defaultTheme = defaultTheme;
+appearance.defaultTheme = defaultTheme
 
 appearance.isDefaultTheme = (theme) => {
   if (!theme) {
-    return false;
+    return false
   }
 
   if (
@@ -190,91 +190,91 @@ appearance.isDefaultTheme = (theme) => {
     theme.secondaryColor.id === defaultSecondaryColor.id &&
     theme.dark === defaultDark
   ) {
-    return true;
+    return true
   }
 
-  return false;
-};
+  return false
+}
 
 appearance.createTheme = (theme) => {
   if (!theme) {
-    return null;
+    return null
   }
 
-  let primaryColor = theme.primaryColor;
-  let secondaryColor = theme.secondaryColor;
-  let dark = theme.dark;
+  let primaryColor = theme.primaryColor
+  let secondaryColor = theme.secondaryColor
+  let dark = theme.dark
 
   if (!primaryColor || !secondaryColor) {
-    return null;
+    return null
   }
 
-  primaryColor = getColor(primaryColor);
-  secondaryColor = getColor(secondaryColor);
+  primaryColor = getColor(primaryColor)
+  secondaryColor = getColor(secondaryColor)
 
   if (!primaryColor || !secondaryColor) {
-    return null;
+    return null
   }
 
   theme = createMuiTheme({
     palette: {
       primary: primaryColor.import,
       secondary: secondaryColor.import,
-      type: dark ? "dark" : "light",
+      type: dark ? 'dark' : 'light',
     },
 
     primaryColor: primaryColor,
     secondaryColor: secondaryColor,
     dark: dark,
-  });
+  })
 
-  return theme;
-};
+  return theme
+}
 
 appearance.changeTheme = (theme) => {
   return new Promise((resolve, reject) => {
     if (!theme) {
-      reject(new Error("No theme"));
+      reject(new Error('No theme'))
 
-      return;
+      return
     }
 
-    let primaryColor = theme.primaryColor;
-    let secondaryColor = theme.secondaryColor;
-    let dark = theme.dark;
+    let primaryColor = theme.primaryColor
+    let secondaryColor = theme.secondaryColor
+    let dark = theme.dark
 
     if (!primaryColor || !secondaryColor) {
-      reject(new Error("No primary color or secondary color"));
+      reject(new Error('No primary color or secondary color'))
 
-      return;
+      return
     }
 
-    primaryColor = getColor(primaryColor);
-    secondaryColor = getColor(secondaryColor);
+    primaryColor = getColor(primaryColor)
+    secondaryColor = getColor(secondaryColor)
 
     if (!primaryColor || !secondaryColor) {
-      reject(new Error("No primary color or secondary color"));
+      reject(new Error('No primary color or secondary color'))
 
-      return;
+      return
     }
 
-    const currentUser = auth.currentUser;
+    const currentUser = auth.currentUser
 
     if (!currentUser) {
-      reject(new Error("No current user"));
+      reject(new Error('No current user'))
 
-      return;
+      return
     }
 
-    const uid = currentUser.uid;
+    const uid = currentUser.uid
 
     if (!uid) {
-      reject(new Error("No UID"));
+      reject(new Error('No UID'))
 
-      return;
+      return
     }
 
-    const userDocumentReference = firestore.collection("users").doc(uid);
+    const userDocumentReference = firestore.collection('users').doc(uid)
 
     userDocumentReference
       .update({
@@ -285,227 +285,227 @@ appearance.changeTheme = (theme) => {
         },
       })
       .then((value) => {
-        analytics.logEvent("change_theme", {
+        analytics.logEvent('change_theme', {
           theme: theme,
-        });
+        })
 
-        resolve(value);
+        resolve(value)
       })
       .catch((reason) => {
-        reject(reason);
-      });
-  });
-};
+        reject(reason)
+      })
+  })
+}
 
 appearance.changePrimaryColor = (primaryColor) => {
   return new Promise((resolve, reject) => {
     if (!primaryColor) {
-      reject(new Error("No primary color"));
+      reject(new Error('No primary color'))
 
-      return;
+      return
     }
 
-    primaryColor = getColor(primaryColor);
+    primaryColor = getColor(primaryColor)
 
     if (!primaryColor) {
-      reject(new Error("No primary color"));
+      reject(new Error('No primary color'))
 
-      return;
+      return
     }
 
-    const currentUser = auth.currentUser;
+    const currentUser = auth.currentUser
 
     if (!currentUser) {
-      reject(new Error("No current user"));
+      reject(new Error('No current user'))
 
-      return;
+      return
     }
 
-    const uid = currentUser.uid;
+    const uid = currentUser.uid
 
     if (!uid) {
-      reject(new Error("No current user"));
+      reject(new Error('No current user'))
 
-      return;
+      return
     }
 
-    const userDocumentReference = firestore.collection("users").doc(uid);
+    const userDocumentReference = firestore.collection('users').doc(uid)
 
     userDocumentReference
       .update({
-        "theme.primaryColor": primaryColor.id,
+        'theme.primaryColor': primaryColor.id,
       })
       .then((value) => {
-        analytics.logEvent("change_primary_color", {
+        analytics.logEvent('change_primary_color', {
           primaryColor: primaryColor.id,
-        });
+        })
 
-        resolve(value);
+        resolve(value)
       })
       .catch((reason) => {
-        reject(reason);
-      });
-  });
-};
+        reject(reason)
+      })
+  })
+}
 
 appearance.changeSecondaryColor = (secondaryColor) => {
   return new Promise((resolve, reject) => {
     if (!secondaryColor) {
-      reject(new Error("No secondary color"));
+      reject(new Error('No secondary color'))
 
-      return;
+      return
     }
 
-    secondaryColor = getColor(secondaryColor);
+    secondaryColor = getColor(secondaryColor)
 
     if (!secondaryColor) {
-      reject(new Error("No secondary color"));
+      reject(new Error('No secondary color'))
 
-      return;
+      return
     }
 
-    const currentUser = auth.currentUser;
+    const currentUser = auth.currentUser
 
     if (!currentUser) {
-      reject(new Error("No current user"));
+      reject(new Error('No current user'))
 
-      return;
+      return
     }
 
-    const uid = currentUser.uid;
+    const uid = currentUser.uid
 
     if (!uid) {
-      reject(new Error("No UID"));
+      reject(new Error('No UID'))
 
-      return;
+      return
     }
 
-    const userDocumentReference = firestore.collection("users").doc(uid);
+    const userDocumentReference = firestore.collection('users').doc(uid)
 
     userDocumentReference
       .update({
-        "theme.secondaryColor": secondaryColor.id,
+        'theme.secondaryColor': secondaryColor.id,
       })
       .then((value) => {
-        analytics.logEvent("change_secondary_color", {
+        analytics.logEvent('change_secondary_color', {
           secondaryColor: secondaryColor.id,
-        });
+        })
 
-        resolve(value);
+        resolve(value)
       })
       .catch((reason) => {
-        reject(reason);
-      });
-  });
-};
+        reject(reason)
+      })
+  })
+}
 
 appearance.changeDark = (dark) => {
   return new Promise((resolve, reject) => {
-    const currentUser = auth.currentUser;
+    const currentUser = auth.currentUser
 
     if (!currentUser) {
-      reject(new Error("No current user"));
+      reject(new Error('No current user'))
 
-      return;
+      return
     }
 
-    const uid = currentUser.uid;
+    const uid = currentUser.uid
 
     if (!uid) {
-      reject(new Error("No UID"));
+      reject(new Error('No UID'))
 
-      return;
+      return
     }
 
-    const userDocumentReference = firestore.collection("users").doc(uid);
+    const userDocumentReference = firestore.collection('users').doc(uid)
 
     userDocumentReference
       .update({
-        "theme.dark": dark,
+        'theme.dark': dark,
       })
       .then((value) => {
-        analytics.logEvent("change_dark", {
+        analytics.logEvent('change_dark', {
           dark: dark,
-        });
+        })
 
-        resolve(value);
+        resolve(value)
       })
       .catch((reason) => {
-        reject(reason);
-      });
-  });
-};
+        reject(reason)
+      })
+  })
+}
 
 appearance.changeSyncAppearance = (syncAppearance) => {
   return new Promise((resolve, reject) => {
-    const currentUser = auth.currentUser;
+    const currentUser = auth.currentUser
 
     if (!currentUser) {
-      reject(new Error("No current user"));
+      reject(new Error('No current user'))
 
-      return;
+      return
     }
 
-    const uid = currentUser.uid;
+    const uid = currentUser.uid
 
     if (!uid) {
-      reject(new Error("No UID"));
+      reject(new Error('No UID'))
 
-      return;
+      return
     }
 
-    const userDocumentReference = firestore.collection("users").doc(uid);
+    const userDocumentReference = firestore.collection('users').doc(uid)
 
     userDocumentReference
       .update({
-        "theme.syncAppearance": syncAppearance,
+        'theme.syncAppearance': syncAppearance,
       })
       .then((value) => {
-        analytics.logEvent("change_sync_appearance", {
+        analytics.logEvent('change_sync_appearance', {
           syncAppearance: syncAppearance,
-        });
+        })
 
-        resolve(value);
+        resolve(value)
       })
       .catch((reason) => {
-        reject(reason);
-      });
-  });
-};
+        reject(reason)
+      })
+  })
+}
 
 appearance.resetTheme = () => {
   return new Promise((resolve, reject) => {
-    const currentUser = auth.currentUser;
+    const currentUser = auth.currentUser
 
     if (!currentUser) {
-      reject(new Error("No current user"));
+      reject(new Error('No current user'))
 
-      return;
+      return
     }
 
-    const uid = currentUser.uid;
+    const uid = currentUser.uid
 
     if (!uid) {
-      reject(new Error("No UID"));
+      reject(new Error('No UID'))
 
-      return;
+      return
     }
 
-    const userDocumentReference = firestore.collection("users").doc(uid);
+    const userDocumentReference = firestore.collection('users').doc(uid)
 
     userDocumentReference
       .update({
         theme: firebase.firestore.FieldValue.delete(),
       })
       .then((value) => {
-        analytics.logEvent("reset_theme");
+        analytics.logEvent('reset_theme')
 
-        resolve(value);
+        resolve(value)
       })
       .catch((reason) => {
-        reject(reason);
-      });
-  });
-};
+        reject(reason)
+      })
+  })
+}
 
-export default appearance;
+export default appearance

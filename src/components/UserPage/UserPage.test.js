@@ -1,13 +1,13 @@
-import React from "react";
+import React from 'react'
 
-import ReactDOM from "react-dom";
+import ReactDOM from 'react-dom'
 
-import { MemoryRouter, Route } from "react-router-dom";
+import { MemoryRouter, Route } from 'react-router-dom'
 
-import UserPage from "./UserPage";
+import UserPage from './UserPage'
 
-it("renders without crashing", () => {
-  const div = document.createElement("div");
+it('renders without crashing', () => {
+  const div = document.createElement('div')
 
   ReactDOM.render(
     <MemoryRouter>
@@ -16,7 +16,7 @@ it("renders without crashing", () => {
       </Route>
     </MemoryRouter>,
     div
-  );
+  )
 
-  ReactDOM.unmountComponentAtNode(div);
-});
+  ReactDOM.unmountComponentAtNode(div)
+})

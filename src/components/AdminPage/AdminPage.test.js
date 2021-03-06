@@ -1,13 +1,13 @@
-import React from "react";
+import React from 'react'
 
-import ReactDOM from "react-dom";
+import ReactDOM from 'react-dom'
 
-import AdminPage from "./AdminPage";
+import AdminPage from './AdminPage'
 
-it("renders without crashing", () => {
-  const div = document.createElement("div");
+it('renders without crashing', () => {
+  const div = document.createElement('div')
 
-  ReactDOM.render(<AdminPage />, div);
+  ReactDOM.render(<AdminPage />, div)
 
-  ReactDOM.unmountComponentAtNode(div);
-});
+  ReactDOM.unmountComponentAtNode(div)
+})

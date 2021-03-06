@@ -1,5 +1,5 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react'
+import PropTypes from 'prop-types'
 
 import {
   Dialog,
@@ -11,28 +11,28 @@ import {
   List,
   ListItem,
   ListItemText,
-} from "@material-ui/core";
+} from '@material-ui/core'
 
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from '@material-ui/core/styles'
 
-import { Close as CloseIcon } from "@material-ui/icons";
+import { Close as CloseIcon } from '@material-ui/icons'
 
 const useStyles = makeStyles((theme) => ({
   closeButton: {
-    position: "absolute",
+    position: 'absolute',
     right: theme.spacing(1),
     top: theme.spacing(1),
   },
-}));
+}))
 
 function AboutDialog(props) {
-  const classes = useStyles();
-  const dialogProps = props.dialogProps;
-  const user = props.user;
-  const version = process.env.REACT_APP_VERSION;
+  const classes = useStyles()
+  const dialogProps = props.dialogProps
+  const user = props.user
+  const version = process.env.REACT_APP_VERSION
 
   if (!user && !version) {
-    return null;
+    return null
   }
 
   return (
@@ -68,12 +68,12 @@ function AboutDialog(props) {
         </List>
       </DialogContent>
     </Dialog>
-  );
+  )
 }
 
 AboutDialog.propTypes = {
   dialogProps: PropTypes.object.isRequired,
   user: PropTypes.object,
-};
+}
 
-export default AboutDialog;
+export default AboutDialog

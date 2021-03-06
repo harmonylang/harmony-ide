@@ -1,21 +1,21 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
-import { BrowserRouter, Switch, Redirect, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Redirect, Route } from 'react-router-dom'
 
-import HomePage from "../HomePage";
-import AdminPage from "../AdminPage";
-import UserPage from "../UserPage";
-import NotFoundPage from "../NotFoundPage";
+import HomePage from '../HomePage'
+import AdminPage from '../AdminPage'
+import UserPage from '../UserPage'
+import NotFoundPage from '../NotFoundPage'
 
 class Router extends Component {
   render() {
     // Properties
-    const { user, roles, theme, bar } = this.props;
+    const { user, roles, theme, bar } = this.props
 
     // Functions
-    const { openSnackbar } = this.props;
+    const { openSnackbar } = this.props
 
     return (
       <BrowserRouter basename={process.env.REACT_APP_BASENAME}>
@@ -27,7 +27,7 @@ class Router extends Component {
           </Route>
 
           <Route path="/admin">
-            {user && roles.includes("admin") ? (
+            {user && roles.includes('admin') ? (
               <AdminPage />
             ) : (
               <Redirect to="/" />
@@ -43,7 +43,7 @@ class Router extends Component {
           </Route>
         </Switch>
       </BrowserRouter>
-    );
+    )
   }
 }
 
@@ -56,6 +56,6 @@ Router.propTypes = {
 
   // Functions
   openSnackbar: PropTypes.func.isRequired,
-};
+}
 
-export default Router;
+export default Router

@@ -1,46 +1,46 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from '@material-ui/core/styles'
 
-import { Avatar, ListItemAvatar } from "@material-ui/core";
+import { Avatar, ListItemAvatar } from '@material-ui/core'
 
 import {
   AccountCircle as AccountCircleIcon,
   Person as PersonIcon,
-} from "@material-ui/icons";
+} from '@material-ui/icons'
 
-import authentication from "../../services/authentication";
+import authentication from '../../services/authentication'
 
 const styles = (theme) => ({
   nameInitials: {
-    cursor: "default",
+    cursor: 'default',
   },
-});
+})
 
 class UserAvatar extends Component {
   render() {
     // Styling
-    const { classes } = this.props;
+    const { classes } = this.props
 
     // Properties
-    const { context, user, defaultCursor } = this.props;
+    const { context, user, defaultCursor } = this.props
 
-    if (context === "standalone") {
+    if (context === 'standalone') {
       if (!user) {
-        return <AccountCircleIcon />;
+        return <AccountCircleIcon />
       }
 
-      const photoUrl = user.photoURL;
+      const photoUrl = user.photoURL
 
       if (photoUrl) {
-        return <Avatar alt="Avatar" src={photoUrl} />;
+        return <Avatar alt="Avatar" src={photoUrl} />
       }
 
       const nameInitials = authentication.getNameInitials({
         ...user,
-      });
+      })
 
       if (nameInitials) {
         return (
@@ -49,13 +49,13 @@ class UserAvatar extends Component {
               {nameInitials}
             </span>
           </Avatar>
-        );
+        )
       }
 
-      return <AccountCircleIcon />;
+      return <AccountCircleIcon />
     }
 
-    if (context === "list") {
+    if (context === 'list') {
       if (!user) {
         return (
           <ListItemAvatar>
@@ -63,22 +63,22 @@ class UserAvatar extends Component {
               <PersonIcon />
             </Avatar>
           </ListItemAvatar>
-        );
+        )
       }
 
-      const photoUrl = user.photoURL;
+      const photoUrl = user.photoURL
 
       if (photoUrl) {
         return (
           <ListItemAvatar>
             <Avatar alt="Avatar" src={photoUrl} />
           </ListItemAvatar>
-        );
+        )
       }
 
       const nameInitials = authentication.getNameInitials({
         ...user,
-      });
+      })
 
       if (nameInitials) {
         return (
@@ -89,7 +89,7 @@ class UserAvatar extends Component {
               </span>
             </Avatar>
           </ListItemAvatar>
-        );
+        )
       }
 
       return (
@@ -98,16 +98,16 @@ class UserAvatar extends Component {
             <PersonIcon />
           </Avatar>
         </ListItemAvatar>
-      );
+      )
     }
 
-    return null;
+    return null
   }
 }
 
 UserAvatar.defaultProps = {
-  context: "standalone",
-};
+  context: 'standalone',
+}
 
 UserAvatar.propTypes = {
   // Styling
@@ -117,6 +117,6 @@ UserAvatar.propTypes = {
   context: PropTypes.string,
   user: PropTypes.object.isRequired,
   defaultCursor: PropTypes.bool,
-};
+}
 
-export default withStyles(styles)(UserAvatar);
+export default withStyles(styles)(UserAvatar)

@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react'
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
-import { Card, CardHeader } from "@material-ui/core";
+import { Card, CardHeader } from '@material-ui/core'
 
 function UserCard(props) {
-  const user = props.user;
+  const user = props.user
 
   return (
     <Card>
@@ -14,11 +14,11 @@ function UserCard(props) {
         subheader={user.username}
       />
     </Card>
-  );
+  )
 }
 
 UserCard.propTypes = {
   user: PropTypes.object.isRequired,
-};
+}
 
-export default UserCard;
+export default UserCard

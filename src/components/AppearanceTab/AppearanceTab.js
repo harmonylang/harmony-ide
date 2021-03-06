@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
 import {
   DialogContent,
@@ -19,49 +19,49 @@ import {
   Checkbox,
   Switch,
   Button,
-} from "@material-ui/core";
+} from '@material-ui/core'
 
 import {
   FiberManualRecord as FiberManualRecordIcon,
   Brightness4 as Brightness4Icon,
   FormatColorReset as FormatColorResetIcon,
-} from "@material-ui/icons";
+} from '@material-ui/icons'
 
-import appearance from "../../services/appearance";
+import appearance from '../../services/appearance'
 
 class AppearanceTab extends Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       performingAction: false,
       primaryColorLabelWidth: 0,
       secondaryColorLabelWidth: 0,
-    };
+    }
 
-    this.primaryColorLabel = React.createRef();
-    this.secondaryColorLabel = React.createRef();
+    this.primaryColorLabel = React.createRef()
+    this.secondaryColorLabel = React.createRef()
   }
 
   handlePrimaryColorChange = (event) => {
     if (!event) {
-      return;
+      return
     }
 
-    const primaryColor = event.target.value;
+    const primaryColor = event.target.value
 
     if (!primaryColor) {
-      return;
+      return
     }
 
-    const { theme } = this.props;
+    const { theme } = this.props
 
     if (!theme) {
-      return;
+      return
     }
 
     if (theme.primaryColor.id === primaryColor) {
-      return;
+      return
     }
 
     this.setState(
@@ -76,43 +76,43 @@ class AppearanceTab extends Component {
             dark: theme.dark,
           })
           .catch((reason) => {
-            const code = reason.code;
-            const message = reason.message;
+            const code = reason.code
+            const message = reason.message
 
             switch (code) {
               default:
-                this.props.openSnackbar(message);
-                return;
+                this.props.openSnackbar(message)
+                return
             }
           })
           .finally(() => {
             this.setState({
               performingAction: false,
-            });
-          });
+            })
+          })
       }
-    );
-  };
+    )
+  }
 
   handleSecondaryColorChange = (event) => {
     if (!event) {
-      return;
+      return
     }
 
-    const secondaryColor = event.target.value;
+    const secondaryColor = event.target.value
 
     if (!secondaryColor) {
-      return;
+      return
     }
 
-    const { theme } = this.props;
+    const { theme } = this.props
 
     if (!theme) {
-      return;
+      return
     }
 
     if (theme.secondaryColor.id === secondaryColor) {
-      return;
+      return
     }
 
     this.setState(
@@ -127,39 +127,39 @@ class AppearanceTab extends Component {
             dark: theme.dark,
           })
           .catch((reason) => {
-            const code = reason.code;
-            const message = reason.message;
+            const code = reason.code
+            const message = reason.message
 
             switch (code) {
               default:
-                this.props.openSnackbar(message);
-                return;
+                this.props.openSnackbar(message)
+                return
             }
           })
           .finally(() => {
             this.setState({
               performingAction: false,
-            });
-          });
+            })
+          })
       }
-    );
-  };
+    )
+  }
 
   handleDarkModeChange = (event) => {
     if (!event) {
-      return;
+      return
     }
 
-    const dark = event.target.checked;
+    const dark = event.target.checked
 
-    const { theme } = this.props;
+    const { theme } = this.props
 
     if (!theme) {
-      return;
+      return
     }
 
     if (theme.dark === dark) {
-      return;
+      return
     }
 
     this.setState(
@@ -174,33 +174,33 @@ class AppearanceTab extends Component {
             dark: dark,
           })
           .catch((reason) => {
-            const code = reason.code;
-            const message = reason.message;
+            const code = reason.code
+            const message = reason.message
 
             switch (code) {
               default:
-                this.props.openSnackbar(message);
-                return;
+                this.props.openSnackbar(message)
+                return
             }
           })
           .finally(() => {
             this.setState({
               performingAction: false,
-            });
-          });
+            })
+          })
       }
-    );
-  };
+    )
+  }
 
   handleResetThemeClick = () => {
-    const { theme } = this.props;
+    const { theme } = this.props
 
     if (!theme) {
-      return;
+      return
     }
 
     if (appearance.isDefaultTheme(theme)) {
-      return;
+      return
     }
 
     this.setState(
@@ -211,37 +211,37 @@ class AppearanceTab extends Component {
         appearance
           .resetTheme()
           .catch((reason) => {
-            const code = reason.code;
-            const message = reason.message;
+            const code = reason.code
+            const message = reason.message
 
             switch (code) {
               default:
-                this.props.openSnackbar(message);
-                return;
+                this.props.openSnackbar(message)
+                return
             }
           })
           .finally(() => {
             this.setState({
               performingAction: false,
-            });
-          });
+            })
+          })
       }
-    );
-  };
+    )
+  }
 
   render() {
     // Properties
-    const { theme } = this.props;
+    const { theme } = this.props
 
     if (!theme) {
-      return null;
+      return null
     }
 
     const {
       performingAction,
       primaryColorLabelWidth,
       secondaryColorLabelWidth,
-    } = this.state;
+    } = this.state
 
     return (
       <DialogContent>
@@ -271,13 +271,13 @@ class AppearanceTab extends Component {
                     onChange={this.handlePrimaryColorChange}
                   >
                     {Object.keys(appearance.colors).map((color) => {
-                      color = appearance.colors[color];
+                      color = appearance.colors[color]
 
                       return (
                         <option key={color.id} value={color.id}>
                           {color.name}
                         </option>
-                      );
+                      )
                     })}
                   </Select>
                 </Hidden>
@@ -289,13 +289,13 @@ class AppearanceTab extends Component {
                     onChange={this.handlePrimaryColorChange}
                   >
                     {Object.keys(appearance.colors).map((color) => {
-                      color = appearance.colors[color];
+                      color = appearance.colors[color]
 
                       return (
                         <MenuItem key={color.id} value={color.id}>
                           {color.name}
                         </MenuItem>
-                      );
+                      )
                     })}
                   </Select>
                 </Hidden>
@@ -328,13 +328,13 @@ class AppearanceTab extends Component {
                     onChange={this.handleSecondaryColorChange}
                   >
                     {Object.keys(appearance.colors).map((color) => {
-                      color = appearance.colors[color];
+                      color = appearance.colors[color]
 
                       return (
                         <option key={color.id} value={color.id}>
                           {color.name}
                         </option>
-                      );
+                      )
                     })}
                   </Select>
                 </Hidden>
@@ -346,13 +346,13 @@ class AppearanceTab extends Component {
                     onChange={this.handleSecondaryColorChange}
                   >
                     {Object.keys(appearance.colors).map((color) => {
-                      color = appearance.colors[color];
+                      color = appearance.colors[color]
 
                       return (
                         <MenuItem key={color.id} value={color.id}>
                           {color.name}
                         </MenuItem>
-                      );
+                      )
                     })}
                   </Select>
                 </Hidden>
@@ -406,8 +406,8 @@ class AppearanceTab extends Component {
               primary="Reset theme"
               secondary={
                 appearance.isDefaultTheme(theme)
-                  ? "No changes made"
-                  : "Changes will be reset"
+                  ? 'No changes made'
+                  : 'Changes will be reset'
               }
             />
 
@@ -424,14 +424,14 @@ class AppearanceTab extends Component {
           </ListItem>
         </List>
       </DialogContent>
-    );
+    )
   }
 
   componentDidMount() {
     this.setState({
       primaryColorLabelWidth: this.primaryColorLabel.current.offsetWidth,
       secondaryColorLabelWidth: this.secondaryColorLabel.current.offsetWidth,
-    });
+    })
   }
 }
 
@@ -441,6 +441,6 @@ AppearanceTab.propTypes = {
 
   // Functions
   openSnackbar: PropTypes.func.isRequired,
-};
+}
 
-export default AppearanceTab;
+export default AppearanceTab

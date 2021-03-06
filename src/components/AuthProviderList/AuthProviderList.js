@@ -1,20 +1,20 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from '@material-ui/core/styles'
 
-import { Box, ButtonGroup, Button } from "@material-ui/core";
+import { Box, ButtonGroup, Button } from '@material-ui/core'
 
-import authProviders from "../../data/auth-providers";
+import authProviders from '../../data/auth-providers'
 
 class AuthProviderList extends Component {
   render() {
     // Properties
-    const { gutterBottom, performingAction } = this.props;
+    const { gutterBottom, performingAction } = this.props
 
     // Events
-    const { onAuthProviderClick } = this.props;
+    const { onAuthProviderClick } = this.props
 
     return (
       <Box mb={gutterBottom ? 3 : 0}>
@@ -29,7 +29,7 @@ class AuthProviderList extends Component {
               root: {
                 color: authProvider.color,
               },
-            })(Button);
+            })(Button)
 
             return (
               <AuthProviderButton
@@ -39,18 +39,18 @@ class AuthProviderList extends Component {
               >
                 {authProvider.name}
               </AuthProviderButton>
-            );
+            )
           })}
         </ButtonGroup>
       </Box>
-    );
+    )
   }
 }
 
 AuthProviderList.defaultProps = {
   gutterBottom: false,
   performingAction: false,
-};
+}
 
 AuthProviderList.propTypes = {
   // Properties
@@ -59,6 +59,6 @@ AuthProviderList.propTypes = {
 
   // Events
   onAuthProviderClick: PropTypes.func.isRequired,
-};
+}
 
-export default AuthProviderList;
+export default AuthProviderList

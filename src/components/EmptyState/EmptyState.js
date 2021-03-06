@@ -1,43 +1,43 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react'
+import PropTypes from 'prop-types'
 
-import { Box, Typography } from "@material-ui/core";
+import { Box, Typography } from '@material-ui/core'
 
 function EmptyState(props) {
-  let imageWidth;
-  let imageHeight;
-  let variant;
+  let imageWidth
+  let imageHeight
+  let variant
 
   switch (props.size) {
-    case "small":
-      imageWidth = 40;
-      imageHeight = 40;
-      variant = "h6";
-      break;
+    case 'small':
+      imageWidth = 40
+      imageHeight = 40
+      variant = 'h6'
+      break
 
-    case "medium":
-      imageWidth = 60;
-      imageHeight = 60;
-      variant = "h6";
-      break;
+    case 'medium':
+      imageWidth = 60
+      imageHeight = 60
+      variant = 'h6'
+      break
 
-    case "large":
-      imageWidth = 100;
-      imageHeight = 100;
-      variant = "h4";
-      break;
+    case 'large':
+      imageWidth = 100
+      imageHeight = 100
+      variant = 'h4'
+      break
 
     default:
-      imageWidth = 60;
-      imageHeight = 60;
-      variant = "h5";
-      break;
+      imageWidth = 60
+      imageHeight = 60
+      variant = 'h5'
+      break
   }
 
-  if (props.type === "page") {
+  if (props.type === 'page') {
     return (
       <Box
-        style={{ transform: "translate(-50%, -50%)" }}
+        style={{ transform: 'translate(-50%, -50%)' }}
         position="absolute"
         top="50%"
         left="50%"
@@ -68,10 +68,10 @@ function EmptyState(props) {
 
         {props.button && props.button}
       </Box>
-    );
+    )
   }
 
-  if (props.type === "card") {
+  if (props.type === 'card') {
     return (
       <Box padding={props.padding} textAlign="center">
         {props.image && (
@@ -99,17 +99,17 @@ function EmptyState(props) {
 
         {props.button && props.button}
       </Box>
-    );
+    )
   }
 
-  return null;
+  return null
 }
 
 EmptyState.defaultProps = {
-  type: "page",
-  size: "medium",
+  type: 'page',
+  size: 'medium',
   padding: 2,
-};
+}
 
 EmptyState.propTypes = {
   type: PropTypes.string,
@@ -120,6 +120,6 @@ EmptyState.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
   button: PropTypes.element,
-};
+}
 
-export default EmptyState;
+export default EmptyState

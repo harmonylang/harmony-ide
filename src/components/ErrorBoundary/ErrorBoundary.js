@@ -1,44 +1,44 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
-import * as Sentry from "@sentry/browser";
+import * as Sentry from '@sentry/browser'
 
-import EmptyState from "../EmptyState";
+import EmptyState from '../EmptyState'
 
-import { ReactComponent as ErrorIllustration } from "../../illustrations/error.svg";
+import { ReactComponent as ErrorIllustration } from '../../illustrations/error.svg'
 
 class ErrorBoundary extends Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       hasError: false,
       eventId: null,
-    };
+    }
   }
 
   static getDerivedStateFromError(error) {
-    return { hasError: true };
+    return { hasError: true }
   }
 
   componentDidCatch(error, errorInfo) {
     Sentry.withScope((scope) => {
-      scope.setExtras(errorInfo);
+      scope.setExtras(errorInfo)
 
-      const eventId = Sentry.captureException(error);
+      const eventId = Sentry.captureException(error)
 
       this.setState({
         eventId: eventId,
-      });
-    });
+      })
+    })
   }
 
   render() {
     // Properties
-    const { children } = this.props;
+    const { children } = this.props
 
-    const { hasError } = this.state;
+    const { hasError } = this.state
 
     if (hasError) {
       return (
@@ -47,16 +47,16 @@ class ErrorBoundary extends Component {
           title="Something went wrong"
           description="The app failed to load"
         />
-      );
+      )
     }
 
-    return children;
+    return children
   }
 }
 
 ErrorBoundary.propTypes = {
   // Properties
   children: PropTypes.array.isRequired,
-};
+}
 
-export default ErrorBoundary;
+export default ErrorBoundary

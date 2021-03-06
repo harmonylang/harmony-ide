@@ -1,10 +1,10 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
-import validate from "validate.js";
+import validate from 'validate.js'
 
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from '@material-ui/core/styles'
 
 import {
   Dialog,
@@ -19,18 +19,18 @@ import {
   Button,
   Divider,
   TextField,
-} from "@material-ui/core";
+} from '@material-ui/core'
 
-import { Close as CloseIcon } from "@material-ui/icons";
+import { Close as CloseIcon } from '@material-ui/icons'
 
-import AuthProviderList from "../AuthProviderList";
+import AuthProviderList from '../AuthProviderList'
 
-import constraints from "../../data/constraints";
-import authentication from "../../services/authentication";
+import constraints from '../../data/constraints'
+import authentication from '../../services/authentication'
 
 const styles = (theme) => ({
   closeButton: {
-    position: "absolute",
+    position: 'absolute',
     right: theme.spacing(1),
     top: theme.spacing(1),
   },
@@ -40,28 +40,28 @@ const styles = (theme) => ({
   },
 
   divider: {
-    margin: "auto",
+    margin: 'auto',
   },
 
   grid: {
     marginBottom: theme.spacing(2),
   },
-});
+})
 
 const initialState = {
   performingAction: false,
-  emailAddress: "",
-  emailAddressConfirmation: "",
-  password: "",
-  passwordConfirmation: "",
+  emailAddress: '',
+  emailAddressConfirmation: '',
+  password: '',
+  passwordConfirmation: '',
   errors: null,
-};
+}
 
 class SignUpDialog extends Component {
   constructor(props) {
-    super(props);
+    super(props)
 
-    this.state = initialState;
+    this.state = initialState
   }
 
   signUp = () => {
@@ -70,7 +70,7 @@ class SignUpDialog extends Component {
       emailAddressConfirmation,
       password,
       passwordConfirmation,
-    } = this.state;
+    } = this.state
 
     const errors = validate(
       {
@@ -85,12 +85,12 @@ class SignUpDialog extends Component {
         password: constraints.password,
         passwordConfirmation: constraints.passwordConfirmation,
       }
-    );
+    )
 
     if (errors) {
       this.setState({
         errors: errors,
-      });
+      })
     } else {
       this.setState(
         {
@@ -101,34 +101,34 @@ class SignUpDialog extends Component {
           authentication
             .signUpWithEmailAddressAndPassword(emailAddress, password)
             .then((value) => {
-              this.props.dialogProps.onClose();
+              this.props.dialogProps.onClose()
             })
             .catch((reason) => {
-              const code = reason.code;
-              const message = reason.message;
+              const code = reason.code
+              const message = reason.message
 
               switch (code) {
-                case "auth/email-already-in-use":
-                case "auth/invalid-email":
-                case "auth/operation-not-allowed":
-                case "auth/weak-password":
-                  this.props.openSnackbar(message);
-                  return;
+                case 'auth/email-already-in-use':
+                case 'auth/invalid-email':
+                case 'auth/operation-not-allowed':
+                case 'auth/weak-password':
+                  this.props.openSnackbar(message)
+                  return
 
                 default:
-                  this.props.openSnackbar(message);
-                  return;
+                  this.props.openSnackbar(message)
+                  return
               }
             })
             .finally(() => {
               this.setState({
                 performingAction: false,
-              });
-            });
+              })
+            })
         }
-      );
+      )
     }
-  };
+  }
 
   signInWithAuthProvider = (provider) => {
     this.setState(
@@ -140,43 +140,43 @@ class SignUpDialog extends Component {
           .signInWithAuthProvider(provider)
           .then((user) => {
             this.props.dialogProps.onClose(() => {
-              const displayName = user.displayName;
-              const emailAddress = user.email;
+              const displayName = user.displayName
+              const emailAddress = user.email
 
               this.props.openSnackbar(
                 `Signed in as ${displayName || emailAddress}`
-              );
-            });
+              )
+            })
           })
           .catch((reason) => {
-            const code = reason.code;
-            const message = reason.message;
+            const code = reason.code
+            const message = reason.message
 
             switch (code) {
-              case "auth/account-exists-with-different-credential":
-              case "auth/auth-domain-config-required":
-              case "auth/cancelled-popup-request":
-              case "auth/operation-not-allowed":
-              case "auth/operation-not-supported-in-this-environment":
-              case "auth/popup-blocked":
-              case "auth/popup-closed-by-user":
-              case "auth/unauthorized-domain":
-                this.props.openSnackbar(message);
-                return;
+              case 'auth/account-exists-with-different-credential':
+              case 'auth/auth-domain-config-required':
+              case 'auth/cancelled-popup-request':
+              case 'auth/operation-not-allowed':
+              case 'auth/operation-not-supported-in-this-environment':
+              case 'auth/popup-blocked':
+              case 'auth/popup-closed-by-user':
+              case 'auth/unauthorized-domain':
+                this.props.openSnackbar(message)
+                return
 
               default:
-                this.props.openSnackbar(message);
-                return;
+                this.props.openSnackbar(message)
+                return
             }
           })
           .finally(() => {
             this.setState({
               performingAction: false,
-            });
-          });
+            })
+          })
       }
-    );
-  };
+    )
+  }
 
   handleKeyPress = (event) => {
     const {
@@ -184,7 +184,7 @@ class SignUpDialog extends Component {
       emailAddressConfirmation,
       password,
       passwordConfirmation,
-    } = this.state;
+    } = this.state
 
     if (
       !emailAddress ||
@@ -192,62 +192,62 @@ class SignUpDialog extends Component {
       !password ||
       !passwordConfirmation
     ) {
-      return;
+      return
     }
 
-    const key = event.key;
+    const key = event.key
 
     if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
-      return;
+      return
     }
 
-    if (key === "Enter") {
-      this.signUp();
+    if (key === 'Enter') {
+      this.signUp()
     }
-  };
+  }
 
   handleExited = () => {
-    this.setState(initialState);
-  };
+    this.setState(initialState)
+  }
 
   handleEmailAddressChange = (event) => {
-    const emailAddress = event.target.value;
+    const emailAddress = event.target.value
 
     this.setState({
       emailAddress: emailAddress,
-    });
-  };
+    })
+  }
 
   handleEmailAddressConfirmationChange = (event) => {
-    const emailAddressConfirmation = event.target.value;
+    const emailAddressConfirmation = event.target.value
 
     this.setState({
       emailAddressConfirmation: emailAddressConfirmation,
-    });
-  };
+    })
+  }
 
   handlePasswordChange = (event) => {
-    const password = event.target.value;
+    const password = event.target.value
 
     this.setState({
       password: password,
-    });
-  };
+    })
+  }
 
   handlePasswordConfirmationChange = (event) => {
-    const passwordConfirmation = event.target.value;
+    const passwordConfirmation = event.target.value
 
     this.setState({
       passwordConfirmation: passwordConfirmation,
-    });
-  };
+    })
+  }
 
   render() {
     // Styling
-    const { classes } = this.props;
+    const { classes } = this.props
 
     // Dialog Properties
-    const { dialogProps } = this.props;
+    const { dialogProps } = this.props
 
     const {
       performingAction,
@@ -256,7 +256,7 @@ class SignUpDialog extends Component {
       password,
       passwordConfirmation,
       errors,
-    } = this.state;
+    } = this.state
 
     return (
       <Dialog
@@ -307,7 +307,7 @@ class SignUpDialog extends Component {
                       helperText={
                         errors && errors.emailAddress
                           ? errors.emailAddress[0]
-                          : ""
+                          : ''
                       }
                       label="E-mail address"
                       placeholder="john@doe.com"
@@ -329,7 +329,7 @@ class SignUpDialog extends Component {
                       helperText={
                         errors && errors.emailAddressConfirmation
                           ? errors.emailAddressConfirmation[0]
-                          : ""
+                          : ''
                       }
                       label="E-mail address confirmation"
                       placeholder="john@doe.com"
@@ -349,7 +349,7 @@ class SignUpDialog extends Component {
                       error={!!(errors && errors.password)}
                       fullWidth
                       helperText={
-                        errors && errors.password ? errors.password[0] : ""
+                        errors && errors.password ? errors.password[0] : ''
                       }
                       label="Password"
                       placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
@@ -371,7 +371,7 @@ class SignUpDialog extends Component {
                       helperText={
                         errors && errors.passwordConfirmation
                           ? errors.passwordConfirmation[0]
-                          : ""
+                          : ''
                       }
                       label="Password confirmation"
                       placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
@@ -405,7 +405,7 @@ class SignUpDialog extends Component {
                   error={!!(errors && errors.emailAddress)}
                   fullWidth
                   helperText={
-                    errors && errors.emailAddress ? errors.emailAddress[0] : ""
+                    errors && errors.emailAddress ? errors.emailAddress[0] : ''
                   }
                   label="E-mail address"
                   placeholder="john@doe.com"
@@ -427,7 +427,7 @@ class SignUpDialog extends Component {
                   helperText={
                     errors && errors.emailAddressConfirmation
                       ? errors.emailAddressConfirmation[0]
-                      : ""
+                      : ''
                   }
                   label="E-mail address confirmation"
                   placeholder="john@doe.com"
@@ -447,7 +447,7 @@ class SignUpDialog extends Component {
                   error={!!(errors && errors.password)}
                   fullWidth
                   helperText={
-                    errors && errors.password ? errors.password[0] : ""
+                    errors && errors.password ? errors.password[0] : ''
                   }
                   label="Password"
                   placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
@@ -469,7 +469,7 @@ class SignUpDialog extends Component {
                   helperText={
                     errors && errors.passwordConfirmation
                       ? errors.passwordConfirmation[0]
-                      : ""
+                      : ''
                   }
                   label="Password confirmation"
                   placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
@@ -502,7 +502,7 @@ class SignUpDialog extends Component {
           </Button>
         </DialogActions>
       </Dialog>
-    );
+    )
   }
 }
 
@@ -515,6 +515,6 @@ SignUpDialog.propTypes = {
 
   // Custom Functions
   openSnackbar: PropTypes.func.isRequired,
-};
+}
 
-export default withStyles(styles)(SignUpDialog);
+export default withStyles(styles)(SignUpDialog)

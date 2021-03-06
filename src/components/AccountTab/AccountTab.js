@@ -1,11 +1,11 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
-import validate from "validate.js";
-import moment from "moment";
+import validate from 'validate.js'
+import moment from 'moment'
 
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from '@material-ui/core/styles'
 
 import {
   DialogContent,
@@ -27,7 +27,7 @@ import {
   Tooltip,
   IconButton,
   Divider,
-} from "@material-ui/core";
+} from '@material-ui/core'
 
 import {
   Photo as PhotoIcon,
@@ -40,10 +40,10 @@ import {
   Check as CheckIcon,
   AccessTime as AccessTimeIcon,
   DeleteForever as DeleteForeverIcon,
-} from "@material-ui/icons";
+} from '@material-ui/icons'
 
-import constraints from "../../data/constraints";
-import authentication from "../../services/authentication";
+import constraints from '../../data/constraints'
+import authentication from '../../services/authentication'
 
 const styles = (theme) => ({
   dialogContent: {
@@ -56,20 +56,20 @@ const styles = (theme) => ({
   },
 
   loadingBadge: {
-    top: "50%",
-    right: "50%",
+    top: '50%',
+    right: '50%',
   },
 
   avatar: {
-    marginRight: "auto",
-    marginLeft: "auto",
+    marginRight: 'auto',
+    marginLeft: 'auto',
 
     width: theme.spacing(14),
     height: theme.spacing(14),
   },
 
   nameInitials: {
-    cursor: "default",
+    cursor: 'default',
   },
 
   personIcon: {
@@ -80,65 +80,65 @@ const styles = (theme) => ({
     width: theme.spacing(4),
     height: theme.spacing(4),
 
-    minHeight: "initial",
+    minHeight: 'initial',
   },
-});
+})
 
 const initialState = {
   profileCompletion: 0,
   securityRating: 0,
-  showingField: "",
+  showingField: '',
   avatar: null,
-  avatarUrl: "",
-  username: "",
-  emailAddress: "",
+  avatarUrl: '',
+  username: '',
+  emailAddress: '',
   performingAction: false,
   loadingAvatar: false,
   sentVerificationEmail: false,
   errors: null,
-};
+}
 
 class AccountTab extends Component {
   constructor(props) {
-    super(props);
+    super(props)
 
-    this.state = initialState;
+    this.state = initialState
   }
 
   getNameInitialsOrIcon = () => {
-    const { user } = this.props;
+    const { user } = this.props
 
     if (!user) {
-      return null;
+      return null
     }
 
-    const { classes, userData } = this.props;
+    const { classes, userData } = this.props
 
     if (!userData) {
-      return <PersonIcon className={classes.personIcon} />;
+      return <PersonIcon className={classes.personIcon} />
     }
 
     const nameInitials = authentication.getNameInitials({
       ...user,
       ...userData,
-    });
+    })
 
     if (nameInitials) {
       return (
         <Typography className={classes.nameInitials} variant="h2">
           {nameInitials}
         </Typography>
-      );
+      )
     }
 
-    return <PersonIcon className={classes.personIcon} />;
-  };
+    return <PersonIcon className={classes.personIcon} />
+  }
 
   uploadAvatar = () => {
-    const { avatar } = this.state;
+    const { avatar } = this.state
 
     if (!avatar) {
-      return;
+      return
     }
 
     this.setState(
@@ -150,23 +150,23 @@ class AccountTab extends Component {
         authentication
           .changeAvatar(avatar)
           .then((value) => {
-            const { user, userData } = this.props;
+            const { user, userData } = this.props
 
             this.setState({
               profileCompletion: authentication.getProfileCompletion({
                 ...user,
                 ...userData,
               }),
-            });
+            })
           })
           .catch((reason) => {
-            const code = reason.code;
-            const message = reason.message;
+            const code = reason.code
+            const message = reason.message
 
             switch (code) {
               default:
-                this.props.openSnackbar(message);
-                return;
+                this.props.openSnackbar(message)
+                return
             }
           })
           .finally(() => {
@@ -174,41 +174,41 @@ class AccountTab extends Component {
               performingAction: false,
               loadingAvatar: false,
               avatar: null,
-              avatarUrl: "",
-            });
-          });
+              avatarUrl: '',
+            })
+          })
       }
-    );
-  };
+    )
+  }
 
   showField = (fieldId) => {
     if (!fieldId) {
-      return;
+      return
     }
 
     this.setState({
       showingField: fieldId,
-    });
-  };
+    })
+  }
 
   hideFields = (callback) => {
     this.setState(
       {
-        showingField: "",
-        username: "",
-        emailAddress: "",
+        showingField: '',
+        username: '',
+        emailAddress: '',
         errors: null,
       },
       () => {
-        if (callback && typeof callback === "function") {
-          callback();
+        if (callback && typeof callback === 'function') {
+          callback()
         }
       }
-    );
-  };
+    )
+  }
 
   changeUsername = () => {
-    const { username } = this.state;
+    const { username } = this.state
 
     const errors = validate(
       {
@@ -217,14 +217,14 @@ class AccountTab extends Component {
       {
         username: constraints.username,
       }
-    );
+    )
 
     if (errors) {
       this.setState({
         errors: errors,
-      });
+      })
 
-      return;
+      return
     }
 
     this.setState(
@@ -232,10 +232,10 @@ class AccountTab extends Component {
         errors: null,
       },
       () => {
-        const { userData } = this.props;
+        const { userData } = this.props
 
         if (username === userData.username) {
-          return;
+          return
         }
 
         this.setState(
@@ -246,7 +246,7 @@ class AccountTab extends Component {
             authentication
               .changeUsername(username)
               .then(() => {
-                const { user, userData } = this.props;
+                const { user, userData } = this.props
 
                 this.setState(
                   {
@@ -256,33 +256,33 @@ class AccountTab extends Component {
                     }),
                   },
                   () => {
-                    this.hideFields();
+                    this.hideFields()
                   }
-                );
+                )
               })
               .catch((reason) => {
-                const code = reason.code;
-                const message = reason.message;
+                const code = reason.code
+                const message = reason.message
 
                 switch (code) {
                   default:
-                    this.props.openSnackbar(message);
-                    return;
+                    this.props.openSnackbar(message)
+                    return
                 }
               })
               .finally(() => {
                 this.setState({
                   performingAction: false,
-                });
-              });
+                })
+              })
           }
-        );
+        )
       }
-    );
-  };
+    )
+  }
 
   changeEmailAddress = () => {
-    const { emailAddress } = this.state;
+    const { emailAddress } = this.state
 
     const errors = validate(
       {
@@ -291,14 +291,14 @@ class AccountTab extends Component {
       {
         emailAddress: constraints.emailAddress,
       }
-    );
+    )
 
     if (errors) {
       this.setState({
         errors: errors,
-      });
+      })
 
-      return;
+      return
     }
 
     this.setState(
@@ -306,10 +306,10 @@ class AccountTab extends Component {
         errors: null,
       },
       () => {
-        const { user } = this.props;
+        const { user } = this.props
 
         if (emailAddress === user.email) {
-          return;
+          return
         }
 
         this.setState(
@@ -320,7 +320,7 @@ class AccountTab extends Component {
             authentication
               .changeEmailAddress(emailAddress)
               .then(() => {
-                const { user, userData } = this.props;
+                const { user, userData } = this.props
 
                 this.setState(
                   {
@@ -330,30 +330,30 @@ class AccountTab extends Component {
                     }),
                   },
                   () => {
-                    this.hideFields();
+                    this.hideFields()
                   }
-                );
+                )
               })
               .catch((reason) => {
-                const code = reason.code;
-                const message = reason.message;
+                const code = reason.code
+                const message = reason.message
 
                 switch (code) {
                   default:
-                    this.props.openSnackbar(message);
-                    return;
+                    this.props.openSnackbar(message)
+                    return
                 }
               })
               .finally(() => {
                 this.setState({
                   performingAction: false,
-                });
-              });
+                })
+              })
           }
-        );
+        )
       }
-    );
-  };
+    )
+  }
 
   verifyEmailAddress = () => {
     this.setState(
@@ -369,138 +369,138 @@ class AccountTab extends Component {
                 sentVerificationEmail: true,
               },
               () => {
-                this.props.openSnackbar("Sent verification e-mail");
+                this.props.openSnackbar('Sent verification e-mail')
               }
-            );
+            )
           })
           .catch((reason) => {
-            const code = reason.code;
-            const message = reason.message;
+            const code = reason.code
+            const message = reason.message
 
             switch (code) {
               default:
-                this.props.openSnackbar(message);
-                return;
+                this.props.openSnackbar(message)
+                return
             }
           })
           .finally(() => {
             this.setState({
               performingAction: false,
-            });
-          });
+            })
+          })
       }
-    );
-  };
+    )
+  }
 
   changeField = (fieldId) => {
     switch (fieldId) {
-      case "username":
-        this.changeUsername();
-        return;
+      case 'username':
+        this.changeUsername()
+        return
 
-      case "email-address":
-        this.changeEmailAddress();
-        return;
+      case 'email-address':
+        this.changeEmailAddress()
+        return
 
       default:
-        return;
+        return
     }
-  };
+  }
 
   handleKeyDown = (event, fieldId) => {
     if (!event || !fieldId) {
-      return;
+      return
     }
 
     if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
-      return;
+      return
     }
 
-    const key = event.key;
+    const key = event.key
 
     if (!key) {
-      return;
+      return
     }
 
-    if (key === "Escape") {
-      this.hideFields();
-    } else if (key === "Enter") {
-      this.changeField(fieldId);
+    if (key === 'Escape') {
+      this.hideFields()
+    } else if (key === 'Enter') {
+      this.changeField(fieldId)
     }
-  };
+  }
 
   handleAvatarChange = (event) => {
     if (!event) {
-      return;
+      return
     }
 
-    const files = event.target.files;
+    const files = event.target.files
 
     if (!files) {
-      return;
+      return
     }
 
-    const avatar = files[0];
+    const avatar = files[0]
 
     if (!avatar) {
-      return;
+      return
     }
 
     const fileTypes = [
-      "image/gif",
-      "image/jpeg",
-      "image/png",
-      "image/webp",
-      "image/svg+xml",
-    ];
+      'image/gif',
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+      'image/svg+xml',
+    ]
 
     if (!fileTypes.includes(avatar.type)) {
-      return;
+      return
     }
 
     if (avatar.size > 20 * 1024 * 1024) {
-      return;
+      return
     }
 
     this.setState({
       avatar: avatar,
       avatarUrl: URL.createObjectURL(avatar),
-    });
-  };
+    })
+  }
 
   handleUsernameChange = (event) => {
     if (!event) {
-      return;
+      return
     }
 
-    const username = event.target.value;
+    const username = event.target.value
 
     this.setState({
       username: username,
-    });
-  };
+    })
+  }
 
   handleEmailAddressChange = (event) => {
     if (!event) {
-      return;
+      return
     }
 
-    const emailAddress = event.target.value;
+    const emailAddress = event.target.value
 
     this.setState({
       emailAddress: emailAddress,
-    });
-  };
+    })
+  }
 
   render() {
     // Styling
-    const { classes } = this.props;
+    const { classes } = this.props
 
     // Properties
-    const { user, userData } = this.props;
+    const { user, userData } = this.props
 
     // Events
-    const { onDeleteAccountClick } = this.props;
+    const { onDeleteAccountClick } = this.props
 
     const {
       profileCompletion,
@@ -514,9 +514,9 @@ class AccountTab extends Component {
       emailAddress,
       sentVerificationEmail,
       errors,
-    } = this.state;
+    } = this.state
 
-    const hasUsername = userData && userData.username;
+    const hasUsername = userData && userData.username
 
     return (
       <DialogContent classes={{ root: classes.dialogContent }}>
@@ -527,15 +527,13 @@ class AccountTab extends Component {
                 <Box textAlign="center">
                   <Box mb={1.5}>
                     {avatar && avatarUrl && (
-                      <Badge
-                        classes={{ badge: classes.badge }}
-                      >
+                      <Badge classes={{ badge: classes.badge }}>
                         {loadingAvatar && (
                           <Badge
                             classes={{ badge: classes.loadingBadge }}
                             badgeContent={
                               <Fade
-                                style={{ transitionDelay: "1s" }}
+                                style={{ transitionDelay: '1s' }}
                                 in={loadingAvatar}
                                 unmountOnExit
                               >
@@ -564,15 +562,13 @@ class AccountTab extends Component {
                     {!avatar && !avatarUrl && (
                       <>
                         {user.photoURL && (
-                          <Badge
-                            classes={{ badge: classes.badge }}
-                          >
+                          <Badge classes={{ badge: classes.badge }}>
                             {loadingAvatar && (
                               <Badge
                                 classes={{ badge: classes.loadingBadge }}
                                 badgeContent={
                                   <Fade
-                                    style={{ transitionDelay: "1s" }}
+                                    style={{ transitionDelay: '1s' }}
                                     in={loadingAvatar}
                                     unmountOnExit
                                   >
@@ -608,7 +604,7 @@ class AccountTab extends Component {
                                 classes={{ badge: classes.loadingBadge }}
                                 badgeContent={
                                   <Fade
-                                    style={{ transitionDelay: "1s" }}
+                                    style={{ transitionDelay: '1s' }}
                                     in={loadingAvatar}
                                     unmountOnExit
                                   >
@@ -678,15 +674,13 @@ class AccountTab extends Component {
             <Box textAlign="center" mb={3}>
               <Box mb={1.5}>
                 {avatar && avatarUrl && (
-                  <Badge
-                    classes={{ badge: classes.badge }}
-                  >
+                  <Badge classes={{ badge: classes.badge }}>
                     {loadingAvatar && (
                       <Badge
                         classes={{ badge: classes.loadingBadge }}
                         badgeContent={
                           <Fade
-                            style={{ transitionDelay: "1s" }}
+                            style={{ transitionDelay: '1s' }}
                             in={loadingAvatar}
                             unmountOnExit
                           >
@@ -715,9 +709,7 @@ class AccountTab extends Component {
                 {!avatar && !avatarUrl && (
                   <>
                     {user.photoURL && (
-                      <Badge
-                        classes={{ badge: classes.badge }}
-                      >
+                      <Badge classes={{ badge: classes.badge }}>
                         {loadingAvatar && (
                           <Badge
                             classes={{ badge: classes.loadingBadge }}
@@ -750,7 +742,7 @@ class AccountTab extends Component {
                             classes={{ badge: classes.loadingBadge }}
                             badgeContent={
                               <Fade
-                                style={{ transitionDelay: "1s" }}
+                                style={{ transitionDelay: '1s' }}
                                 in={loadingAvatar}
                                 unmountOnExit
                               >
@@ -878,7 +870,7 @@ class AccountTab extends Component {
               </ListItemIcon>
             )}
 
-            {showingField === "username" && (
+            {showingField === 'username' && (
               <TextField
                 autoComplete="username"
                 autoFocus
@@ -888,7 +880,7 @@ class AccountTab extends Component {
                 helperText={
                   errors && errors.username
                     ? errors.username[0]
-                    : "Press Enter to change your username"
+                    : 'Press Enter to change your username'
                 }
                 label="Username"
                 placeholder={hasUsername && userData.username}
@@ -898,19 +890,19 @@ class AccountTab extends Component {
                 variant="filled"
                 InputLabelProps={{ required: false }}
                 onBlur={this.hideFields}
-                onKeyDown={(event) => this.handleKeyDown(event, "username")}
+                onKeyDown={(event) => this.handleKeyDown(event, 'username')}
                 onChange={this.handleUsernameChange}
               />
             )}
 
-            {showingField !== "username" && (
+            {showingField !== 'username' && (
               <>
                 <ListItemText
                   primary="Username"
                   secondary={
                     hasUsername
                       ? userData.username
-                      : "You don’t have a username"
+                      : 'You don’t have a username'
                   }
                 />
 
@@ -920,7 +912,7 @@ class AccountTab extends Component {
                       <div>
                         <IconButton
                           disabled={performingAction}
-                          onClick={() => this.showField("username")}
+                          onClick={() => this.showField('username')}
                         >
                           <EditIcon />
                         </IconButton>
@@ -933,7 +925,7 @@ class AccountTab extends Component {
                       color="primary"
                       disabled={performingAction}
                       variant="contained"
-                      onClick={() => this.showField("username")}
+                      onClick={() => this.showField('username')}
                     >
                       Add
                     </Button>
@@ -976,7 +968,7 @@ class AccountTab extends Component {
               </ListItemIcon>
             )}
 
-            {showingField === "email-address" && (
+            {showingField === 'email-address' && (
               <TextField
                 autoComplete="email"
                 autoFocus
@@ -986,7 +978,7 @@ class AccountTab extends Component {
                 helperText={
                   errors && errors.emailAddress
                     ? errors.emailAddress[0]
-                    : "Press Enter to change your e-mail address"
+                    : 'Press Enter to change your e-mail address'
                 }
                 label="E-mail address"
                 placeholder={user.email}
@@ -997,18 +989,18 @@ class AccountTab extends Component {
                 InputLabelProps={{ required: false }}
                 onBlur={this.hideFields}
                 onKeyDown={(event) =>
-                  this.handleKeyDown(event, "email-address")
+                  this.handleKeyDown(event, 'email-address')
                 }
                 onChange={this.handleEmailAddressChange}
               />
             )}
 
-            {showingField !== "email-address" && (
+            {showingField !== 'email-address' && (
               <>
                 <ListItemText
                   primary="E-mail address"
                   secondary={
-                    user.email ? user.email : "You don’t have an e-mail address"
+                    user.email ? user.email : 'You don’t have an e-mail address'
                   }
                 />
 
@@ -1036,7 +1028,7 @@ class AccountTab extends Component {
                       <div>
                         <IconButton
                           disabled={performingAction}
-                          onClick={() => this.showField("email-address")}
+                          onClick={() => this.showField('email-address')}
                         >
                           <EditIcon />
                         </IconButton>
@@ -1049,7 +1041,7 @@ class AccountTab extends Component {
                       color="primary"
                       disabled={performingAction}
                       variant="contained"
-                      onClick={() => this.showField("email-address")}
+                      onClick={() => this.showField('email-address')}
                     >
                       Add
                     </Button>
@@ -1069,14 +1061,14 @@ class AccountTab extends Component {
             <Hidden xsDown>
               <ListItemText
                 primary="Signed in"
-                secondary={moment(user.metadata.lastSignInTime).format("LLLL")}
+                secondary={moment(user.metadata.lastSignInTime).format('LLLL')}
               />
             </Hidden>
 
             <Hidden smUp>
               <ListItemText
                 primary="Signed in"
-                secondary={moment(user.metadata.lastSignInTime).format("llll")}
+                secondary={moment(user.metadata.lastSignInTime).format('llll')}
               />
             </Hidden>
           </ListItem>
@@ -1110,11 +1102,11 @@ class AccountTab extends Component {
           </ListItem>
         </List>
       </DialogContent>
-    );
+    )
   }
 
   componentDidMount() {
-    const { user, userData } = this.props;
+    const { user, userData } = this.props
 
     this.setState({
       profileCompletion: authentication.getProfileCompletion({
@@ -1122,18 +1114,18 @@ class AccountTab extends Component {
         ...userData,
       }),
       securityRating: authentication.getSecurityRating(user, userData),
-    });
+    })
   }
 
   componentWillUnmount() {
-    const { avatarUrl } = this.state;
+    const { avatarUrl } = this.state
 
     if (avatarUrl) {
-      URL.revokeObjectURL(avatarUrl);
+      URL.revokeObjectURL(avatarUrl)
 
       this.setState({
-        avatarUrl: "",
-      });
+        avatarUrl: '',
+      })
     }
   }
 }
@@ -1151,6 +1143,6 @@ AccountTab.propTypes = {
 
   // Events
   onDeleteAccountClick: PropTypes.func.isRequired,
-};
+}
 
-export default withStyles(styles)(AccountTab);
+export default withStyles(styles)(AccountTab)

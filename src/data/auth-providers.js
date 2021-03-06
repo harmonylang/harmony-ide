@@ -1,21 +1,21 @@
-import React from "react";
+import React from 'react'
 
-import { Github as GitHubIcon } from "mdi-material-ui";
-import { Google as GoogleIcon } from "mdi-material-ui";
+import { Github as GitHubIcon } from 'mdi-material-ui'
+import { Google as GoogleIcon } from 'mdi-material-ui'
 
 const authProviders = [
   {
-    id: "google.com",
-    color: "#ea4335",
+    id: 'google.com',
+    color: '#ea4335',
     icon: <GoogleIcon />,
-    name: "Google",
+    name: 'Google',
   },
   {
-    id: "github.com",
-    color: "#24292e",
+    id: 'github.com',
+    color: '#24292e',
     icon: <GitHubIcon />,
-    name: "GitHub",
-    scopes: ["repo"],
+    name: 'GitHub',
+    scopes: ['repo'],
   },
   // {
   //   id: "microsoft.com",
@@ -23,6 +23,6 @@ const authProviders = [
   //   icon: <MicrosoftIcon />,
   //   name: "Microsoft",
   // }
-];
+]
 
-export default authProviders;
+export default authProviders

@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react'
 
-import ReactDOM from "react-dom";
+import ReactDOM from 'react-dom'
 
-import AppearanceTab from "./AppearanceTab";
+import AppearanceTab from './AppearanceTab'
 
-it("renders without crashing", () => {
-  const div = document.createElement("div");
+it('renders without crashing', () => {
+  const div = document.createElement('div')
 
   ReactDOM.render(
     <AppearanceTab
@@ -16,19 +16,19 @@ it("renders without crashing", () => {
       }}
       theme={{
         primaryColor: {
-          id: "blue",
+          id: 'blue',
         },
         secondaryColor: {
-          id: "red",
+          id: 'red',
         },
         type: {
-          id: "dark",
+          id: 'dark',
         },
       }}
       openSnackbar={() => {}}
     />,
     div
-  );
+  )
 
-  ReactDOM.unmountComponentAtNode(div);
-});
+  ReactDOM.unmountComponentAtNode(div)
+})

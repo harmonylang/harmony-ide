@@ -1,8 +1,8 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
-import { withStyles } from "@material-ui/core/styles";
+import { withStyles } from '@material-ui/core/styles'
 
 import {
   Dialog,
@@ -12,95 +12,95 @@ import {
   IconButton,
   Tabs,
   Tab,
-} from "@material-ui/core";
+} from '@material-ui/core'
 
 import {
   Close as CloseIcon,
   AccountCircle as AccountCircleIcon,
   Tune as TuneIcon,
   Security as SecurityIcon,
-} from "@material-ui/icons";
+} from '@material-ui/icons'
 
-import SwipeableViews from "react-swipeable-views";
+import SwipeableViews from 'react-swipeable-views'
 
-import AccountTab from "../AccountTab";
-import AppearanceTab from "../AppearanceTab";
-import SecurityTab from "../SecurityTab";
+import AccountTab from '../AccountTab'
+import AppearanceTab from '../AppearanceTab'
+import SecurityTab from '../SecurityTab'
 
 const styles = (theme) => ({
   closeButton: {
-    position: "absolute",
+    position: 'absolute',
     right: theme.spacing(1),
     top: theme.spacing(1),
   },
 
   tabs: {
-    display: "initial",
+    display: 'initial',
   },
-});
+})
 
 const tabs = [
   {
-    key: "account",
+    key: 'account',
     icon: <AccountCircleIcon />,
-    label: "Account",
+    label: 'Account',
   },
   {
-    key: "preferences",
+    key: 'preferences',
     icon: <TuneIcon />,
-    label: "Preferences",
+    label: 'Preferences',
   },
   {
-    key: "security",
+    key: 'security',
     icon: <SecurityIcon />,
-    label: "Security",
+    label: 'Security',
   },
-];
+]
 
 const initialState = {
   selectedTab: 0,
-};
+}
 
 class SettingsDialog extends Component {
   constructor(props) {
-    super(props);
+    super(props)
 
-    this.state = initialState;
+    this.state = initialState
   }
 
   handleExited = () => {
-    this.setState(initialState);
-  };
+    this.setState(initialState)
+  }
 
   handleTabChange = (event, value) => {
     this.setState({
       selectedTab: value,
-    });
-  };
+    })
+  }
 
   handleIndexChange = (index) => {
     this.setState({
       selectedTab: index,
-    });
-  };
+    })
+  }
 
   render() {
     // Styling
-    const { classes } = this.props;
+    const { classes } = this.props
 
     // Dialog Properties
-    const { dialogProps } = this.props;
+    const { dialogProps } = this.props
 
     // Custom Properties
-    const { user, userData, theme } = this.props;
+    const { user, userData, theme } = this.props
 
     // Custom Functions
-    const { openSnackbar } = this.props;
+    const { openSnackbar } = this.props
 
     // Custom Functions
-    const { onDeleteAccountClick } = this.props;
+    const { onDeleteAccountClick } = this.props
 
-    const { selectedTab } = this.state;
+    const { selectedTab } = this.state
 
     return (
       <Dialog {...dialogProps} onExited={this.handleExited}>
@@ -119,7 +119,7 @@ class SettingsDialog extends Component {
 
         <Tabs
           classes={{ root: classes.tabs }}
-          style={{ overflow: "initial", minHeight: "initial" }}
+          style={{ overflow: 'initial', minHeight: 'initial' }}
           indicatorColor="primary"
           textColor="primary"
           value={selectedTab}
@@ -127,7 +127,7 @@ class SettingsDialog extends Component {
           onChange={this.handleTabChange}
         >
           {tabs.map((tab) => {
-            return <Tab key={tab.key} icon={tab.icon} label={tab.label} />;
+            return <Tab key={tab.key} icon={tab.icon} label={tab.label} />
           })}
         </Tabs>
 
@@ -151,7 +151,7 @@ class SettingsDialog extends Component {
           />
         </SwipeableViews>
       </Dialog>
-    );
+    )
   }
 }
 
@@ -172,6 +172,6 @@ SettingsDialog.propTypes = {
 
   // Custom Events
   onDeleteAccountClick: PropTypes.func.isRequired,
-};
+}
 
-export default withStyles(styles)(SettingsDialog);
+export default withStyles(styles)(SettingsDialog)

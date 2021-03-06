@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react'
 
-import ReactDOM from "react-dom";
+import ReactDOM from 'react-dom'
 
-import AboutDialog from "./AboutDialog";
+import AboutDialog from './AboutDialog'
 
-it("renders without crashing", () => {
-  const div = document.createElement("div");
+it('renders without crashing', () => {
+  const div = document.createElement('div')
 
   ReactDOM.render(
     <AboutDialog
@@ -16,7 +16,7 @@ it("renders without crashing", () => {
       }}
     />,
     div
-  );
+  )
 
-  ReactDOM.unmountComponentAtNode(div);
-});
+  ReactDOM.unmountComponentAtNode(div)
+})

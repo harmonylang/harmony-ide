@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react'
 
-import ReactDOM from "react-dom";
+import ReactDOM from 'react-dom'
 
-import DeleteAccountDialog from "./DeleteAccountDialog";
+import DeleteAccountDialog from './DeleteAccountDialog'
 
-it("renders without crashing", () => {
-  const div = document.createElement("div");
+it('renders without crashing', () => {
+  const div = document.createElement('div')
 
   ReactDOM.render(
     <DeleteAccountDialog
@@ -19,7 +19,7 @@ it("renders without crashing", () => {
       deleteAccount={() => {}}
     />,
     div
-  );
+  )
 
-  ReactDOM.unmountComponentAtNode(div);
-});
+  ReactDOM.unmountComponentAtNode(div)
+})

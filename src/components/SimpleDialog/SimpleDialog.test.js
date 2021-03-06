@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react'
 
-import ReactDOM from "react-dom";
+import ReactDOM from 'react-dom'
 
-import SimpleDialog from "./SimpleDialog";
+import SimpleDialog from './SimpleDialog'
 
-it("renders without crashing", () => {
-  const div = document.createElement("div");
+it('renders without crashing', () => {
+  const div = document.createElement('div')
 
   ReactDOM.render(
     <SimpleDialog
@@ -17,7 +17,7 @@ it("renders without crashing", () => {
       content={<div></div>}
     />,
     div
-  );
+  )
 
-  ReactDOM.unmountComponentAtNode(div);
-});
+  ReactDOM.unmountComponentAtNode(div)
+})

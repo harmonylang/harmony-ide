@@ -1,9 +1,9 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
-import validate from "validate.js";
-import moment from "moment";
+import validate from 'validate.js'
+import moment from 'moment'
 
 import {
   DialogContent,
@@ -16,58 +16,58 @@ import {
   TextField,
   Tooltip,
   IconButton,
-} from "@material-ui/core";
+} from '@material-ui/core'
 
-import { Lock as LockIcon, Edit as EditIcon } from "@material-ui/icons";
+import { Lock as LockIcon, Edit as EditIcon } from '@material-ui/icons'
 
-import constraints from "../../data/constraints";
-import authentication from "../../services/authentication";
+import constraints from '../../data/constraints'
+import authentication from '../../services/authentication'
 
 const initialState = {
-  showingField: "",
-  password: "",
-  passwordConfirmation: "",
+  showingField: '',
+  password: '',
+  passwordConfirmation: '',
   performingAction: false,
   errors: null,
-};
+}
 
 class SecurityTab extends Component {
   constructor(props) {
-    super(props);
+    super(props)
 
-    this.state = initialState;
+    this.state = initialState
   }
 
   showField = (fieldId) => {
     if (!fieldId) {
-      return;
+      return
     }
 
     this.setState({
       showingField: fieldId,
-    });
-  };
+    })
+  }
 
   hideFields = (callback) => {
     this.setState(
       {
-        showingField: "",
-        password: "",
-        passwordConfirmation: "",
+        showingField: '',
+        password: '',
+        passwordConfirmation: '',
         errors: null,
       },
       () => {
-        if (callback && typeof callback === "function") {
-          callback();
+        if (callback && typeof callback === 'function') {
+          callback()
         }
       }
-    );
-  };
+    )
+  }
 
   changeField = (fieldId) => {
     switch (fieldId) {
-      case "password":
-        const { password } = this.state;
+      case 'password':
+        const { password } = this.state
 
         const errors = validate(
           {
@@ -76,14 +76,14 @@ class SecurityTab extends Component {
           {
             password: constraints.password,
           }
-        );
+        )
 
         if (errors) {
           this.setState({
             errors: errors,
-          });
+          })
 
-          return;
+          return
         }
 
         this.setState(
@@ -91,22 +91,22 @@ class SecurityTab extends Component {
             errors: null,
           },
           () => {
-            this.showField("password-confirmation");
+            this.showField('password-confirmation')
           }
-        );
-        return;
+        )
+        return
 
-      case "password-confirmation":
-        this.changePassword();
-        return;
+      case 'password-confirmation':
+        this.changePassword()
+        return
 
       default:
-        return;
+        return
     }
-  };
+  }
 
   changePassword = () => {
-    const { password, passwordConfirmation } = this.state;
+    const { password, passwordConfirmation } = this.state
 
     const errors = validate(
       {
@@ -117,14 +117,14 @@ class SecurityTab extends Component {
         password: constraints.password,
         passwordConfirmation: constraints.passwordConfirmation,
       }
-    );
+    )
 
     if (errors) {
       this.setState({
         errors: errors,
-      });
+      })
 
-      return;
+      return
     }
 
     this.setState(
@@ -141,79 +141,79 @@ class SecurityTab extends Component {
               .changePassword(password)
               .then(() => {
                 this.hideFields(() => {
-                  this.props.openSnackbar("Changed password");
-                });
+                  this.props.openSnackbar('Changed password')
+                })
               })
               .catch((reason) => {
-                const code = reason.code;
-                const message = reason.message;
+                const code = reason.code
+                const message = reason.message
 
                 switch (code) {
                   default:
-                    this.props.openSnackbar(message);
-                    return;
+                    this.props.openSnackbar(message)
+                    return
                 }
               })
               .finally(() => {
                 this.setState({
                   performingAction: false,
-                });
-              });
+                })
+              })
           }
-        );
+        )
       }
-    );
-  };
+    )
+  }
 
   handleKeyDown = (event, fieldId) => {
     if (!event || !fieldId) {
-      return;
+      return
     }
 
     if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
-      return;
+      return
     }
 
-    const key = event.key;
+    const key = event.key
 
     if (!key) {
-      return;
+      return
     }
 
-    if (key === "Escape") {
-      this.hideFields();
-    } else if (key === "Enter") {
-      this.changeField(fieldId);
+    if (key === 'Escape') {
+      this.hideFields()
+    } else if (key === 'Enter') {
+      this.changeField(fieldId)
     }
-  };
+  }
 
   handlePasswordChange = (event) => {
     if (!event) {
-      return;
+      return
     }
 
-    const password = event.target.value;
+    const password = event.target.value
 
     this.setState({
       password: password,
-    });
-  };
+    })
+  }
 
   handlePasswordConfirmationChange = (event) => {
     if (!event) {
-      return;
+      return
     }
 
-    const passwordConfirmation = event.target.value;
+    const passwordConfirmation = event.target.value
 
     this.setState({
       passwordConfirmation: passwordConfirmation,
-    });
-  };
+    })
+  }
 
   render() {
     // Properties
-    const { userData } = this.props;
+    const { userData } = this.props
 
     const {
       showingField,
@@ -221,9 +221,9 @@ class SecurityTab extends Component {
       passwordConfirmation,
       performingAction,
       errors,
-    } = this.state;
+    } = this.state
 
-    const hasChangedPassword = userData && userData.lastPasswordChange;
+    const hasChangedPassword = userData && userData.lastPasswordChange
 
     return (
       <DialogContent>
@@ -235,7 +235,7 @@ class SecurityTab extends Component {
               </ListItemIcon>
             </Hidden>
 
-            {showingField === "password" && (
+            {showingField === 'password' && (
               <TextField
                 autoComplete="new-password"
                 autoFocus
@@ -245,7 +245,7 @@ class SecurityTab extends Component {
                 helperText={
                   errors && errors.password
                     ? errors.password[0]
-                    : "Press Enter to change your password"
+                    : 'Press Enter to change your password'
                 }
                 label="Password"
                 required
@@ -254,12 +254,12 @@ class SecurityTab extends Component {
                 variant="filled"
                 InputLabelProps={{ required: false }}
                 onBlur={this.hideFields}
-                onKeyDown={(event) => this.handleKeyDown(event, "password")}
+                onKeyDown={(event) => this.handleKeyDown(event, 'password')}
                 onChange={this.handlePasswordChange}
               />
             )}
 
-            {showingField === "password-confirmation" && (
+            {showingField === 'password-confirmation' && (
               <TextField
                 autoComplete="new-password"
                 autoFocus
@@ -269,7 +269,7 @@ class SecurityTab extends Component {
                 helperText={
                   errors && errors.passwordConfirmation
                     ? errors.passwordConfirmation[0]
-                    : "Press Enter to change your password"
+                    : 'Press Enter to change your password'
                 }
                 label="Password confirmation"
                 required
@@ -279,14 +279,14 @@ class SecurityTab extends Component {
                 InputLabelProps={{ required: false }}
                 onBlur={this.hideFields}
                 onKeyDown={(event) =>
-                  this.handleKeyDown(event, "password-confirmation")
+                  this.handleKeyDown(event, 'password-confirmation')
                 }
                 onChange={this.handlePasswordConfirmationChange}
               />
             )}
 
-            {showingField !== "password" &&
-              showingField !== "password-confirmation" && (
+            {showingField !== 'password' &&
+              showingField !== 'password-confirmation' && (
                 <>
                   <Hidden xsDown>
                     <ListItemText
@@ -295,8 +295,8 @@ class SecurityTab extends Component {
                         hasChangedPassword
                           ? `Last changed ${moment(
                               userData.lastPasswordChange.toDate()
-                            ).format("LL")}`
-                          : "Never changed"
+                            ).format('LL')}`
+                          : 'Never changed'
                       }
                     />
                   </Hidden>
@@ -308,8 +308,8 @@ class SecurityTab extends Component {
                         hasChangedPassword
                           ? `Last changed ${moment(
                               userData.lastPasswordChange.toDate()
-                            ).format("ll")}`
-                          : "Never changed"
+                            ).format('ll')}`
+                          : 'Never changed'
                       }
                     />
                   </Hidden>
@@ -319,7 +319,7 @@ class SecurityTab extends Component {
                       <div>
                         <IconButton
                           disabled={performingAction}
-                          onClick={() => this.showField("password")}
+                          onClick={() => this.showField('password')}
                         >
                           <EditIcon />
                         </IconButton>
@@ -331,7 +331,7 @@ class SecurityTab extends Component {
           </ListItem>
         </List>
       </DialogContent>
-    );
+    )
   }
 }
 
@@ -341,6 +341,6 @@ SecurityTab.propTypes = {
 
   // Functions
   openSnackbar: PropTypes.func.isRequired,
-};
+}
 
-export default SecurityTab;
+export default SecurityTab

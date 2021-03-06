@@ -1,52 +1,52 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react'
 
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link } from 'react-router-dom'
 
-import { Grid, Fab, Box } from "@material-ui/core";
+import { Grid, Fab, Box } from '@material-ui/core'
 
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from '@material-ui/core/styles'
 
-import { Refresh as RefreshIcon, Home as HomeIcon } from "@material-ui/icons";
+import { Refresh as RefreshIcon, Home as HomeIcon } from '@material-ui/icons'
 
-import { firestore } from "../../firebase";
+import { firestore } from '../../firebase'
 
-import EmptyState from "../EmptyState";
+import EmptyState from '../EmptyState'
 
-import Loader from "../Loader";
-import UserCard from "../UserCard";
+import Loader from '../Loader'
+import UserCard from '../UserCard'
 
-import { ReactComponent as ErrorIllustration } from "../../illustrations/error.svg";
-import { ReactComponent as NoDataIllustration } from "../../illustrations/no-data.svg";
+import { ReactComponent as ErrorIllustration } from '../../illustrations/error.svg'
+import { ReactComponent as NoDataIllustration } from '../../illustrations/no-data.svg'
 
 const useStyles = makeStyles({
   grid: {
     margin: 0,
-    width: "100%",
+    width: '100%',
   },
-});
+})
 
 function UserPage() {
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState(null);
-  const { userId } = useParams();
-  const classes = useStyles();
+  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null)
+  const [error, setError] = useState(null)
+  const { userId } = useParams()
+  const classes = useStyles()
 
   useEffect(() => {
     return firestore
-      .collection("users")
+      .collection('users')
       .doc(userId)
       .onSnapshot(
         (snapshot) => {
-          setLoading(false);
-          setUser(snapshot.data());
+          setLoading(false)
+          setUser(snapshot.data())
         },
         (error) => {
-          setLoading(false);
-          setError(error);
+          setLoading(false)
+          setError(error)
         }
-      );
-  }, [userId]);
+      )
+  }, [userId])
 
   if (error) {
     return (
@@ -67,11 +67,11 @@ function UserPage() {
           </Fab>
         }
       />
-    );
+    )
   }
 
   if (loading) {
-    return <Loader />;
+    return <Loader />
   }
 
   if (!user) {
@@ -89,10 +89,10 @@ function UserPage() {
           </Fab>
         }
       />
-    );
+    )
   }
 
-  const hasProfile = user.firstName && user.lastName && user.username;
+  const hasProfile = user.firstName && user.lastName && user.username
 
   if (hasProfile) {
     return (
@@ -101,7 +101,7 @@ function UserPage() {
           <UserCard user={user} />
         </Grid>
       </Grid>
-    );
+    )
   }
 
   return (
@@ -110,7 +110,7 @@ function UserPage() {
       title="No profile."
       description="The user hasn‘t setup their profile."
     />
-  );
+  )
 }
 
-export default UserPage;
+export default UserPage

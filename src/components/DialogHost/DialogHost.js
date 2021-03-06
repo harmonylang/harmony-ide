@@ -1,31 +1,31 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
-import { Hidden } from "@material-ui/core";
+import { Hidden } from '@material-ui/core'
 
-import AboutDialog from "../AboutDialog";
+import AboutDialog from '../AboutDialog'
 
-import SignUpDialog from "../SignUpDialog";
-import SignInDialog from "../SignInDialog";
-import SettingsDialog from "../SettingsDialog";
-import DeleteAccountDialog from "../DeleteAccountDialog";
-import AlertDialog from "../AlertDialog";
+import SignUpDialog from '../SignUpDialog'
+import SignInDialog from '../SignInDialog'
+import SettingsDialog from '../SettingsDialog'
+import DeleteAccountDialog from '../DeleteAccountDialog'
+import AlertDialog from '../AlertDialog'
 
 class DialogHost extends Component {
   render() {
     // Properties
-    const { performingAction, theme, user, userData, dialogs } = this.props;
+    const { performingAction, theme, user, userData, dialogs } = this.props
 
     // Functions
-    const { openSnackbar } = this.props;
+    const { openSnackbar } = this.props
 
-    const aboutDialog = dialogs.aboutDialog;
-    const signUpDialog = dialogs.signUpDialog;
-    const signInDialog = dialogs.signInDialog;
-    const settingsDialog = dialogs.settingsDialog;
-    const deleteAccountDialog = dialogs.deleteAccountDialog;
-    const signOutDialog = dialogs.signOutDialog;
+    const aboutDialog = dialogs.aboutDialog
+    const signUpDialog = dialogs.signUpDialog
+    const signInDialog = dialogs.signInDialog
+    const settingsDialog = dialogs.settingsDialog
+    const deleteAccountDialog = dialogs.deleteAccountDialog
+    const signOutDialog = dialogs.signOutDialog
 
     return (
       <>
@@ -181,7 +181,7 @@ class DialogHost extends Component {
           )}
         </Hidden>
       </>
-    );
+    )
   }
 }
 
@@ -195,6 +195,6 @@ DialogHost.propTypes = {
 
   // Functions
   openSnackbar: PropTypes.func.isRequired,
-};
+}
 
-export default DialogHost;
+export default DialogHost

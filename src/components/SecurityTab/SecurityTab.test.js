@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react'
 
-import ReactDOM from "react-dom";
+import ReactDOM from 'react-dom'
 
-import SecurityTab from "./SecurityTab";
+import SecurityTab from './SecurityTab'
 
-it("renders without crashing", () => {
-  const div = document.createElement("div");
+it('renders without crashing', () => {
+  const div = document.createElement('div')
 
   ReactDOM.render(
     <SecurityTab
@@ -19,7 +19,7 @@ it("renders without crashing", () => {
       openSnackbar={() => {}}
     />,
     div
-  );
+  )
 
-  ReactDOM.unmountComponentAtNode(div);
-});
+  ReactDOM.unmountComponentAtNode(div)
+})
