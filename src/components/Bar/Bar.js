@@ -67,6 +67,7 @@ class Bar extends Component {
     // Events
     const {
       onRunHarmony,
+      onSaveProject,
       onAboutClick,
       onSettingsClick,
       onSignOutClick,
@@ -113,19 +114,13 @@ class Bar extends Component {
                 {process.env.REACT_APP_TITLE}
               </Typography>
             </Box>
+
           </Box>
 
           <Box mr={2}>
-            <ButtonGroup
-              color="default"
-              aria-label="outlined secondary button group"
-            >
-              <Button>
-                <RunIcon onClick={onRunHarmony} />
-              </Button>
-              <Button>
-                <SaveIcon />
-              </Button>
+            <ButtonGroup color="default" aria-label="outlined secondary button group">
+              <Button><RunIcon onClick={onRunHarmony} /></Button>
+              <Button><SaveIcon onClick={onSaveProject} /></Button>
             </ButtonGroup>
           </Box>
 

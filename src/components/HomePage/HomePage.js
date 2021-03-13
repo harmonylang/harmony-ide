@@ -60,7 +60,7 @@ class HomePage extends Component {
   }
 
   render() {
-    const { classes, theme, handleEditorChange } = this.props
+    const { classes, theme, project, addFileRequest, setFileActive, handleEditorChange } = this.props;
 
     return (
       <Box className={classes.root}>
@@ -74,19 +74,20 @@ class HomePage extends Component {
           <Toolbar />
           <div className={classes.drawerContainer}>
             <List>
-              {[
-                'diners.hny',
-                'peterson.hny',
-                'dinersAvoid.hny',
-                'New File',
-              ].map((text, index, arr) => (
-                <ListItem button key={text}>
-                  <ListItemIcon>
-                    {arr.length - 1 === index ? <AddIcon /> : <FileIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
+              {project && project.files.map((text, index, arr) => (
+                <ListItem
+                  button
+                  key={text.name}
+                  selected={text.name === project.activeFile}
+                  onClick={() => setFileActive(text.name)} >
+                  <ListItemIcon><FileIcon /></ListItemIcon>
+                  <ListItemText primary={text.name} />
                 </ListItem>
               ))}
+              <ListItem button key={"add-file"} onClick={addFileRequest}>
+                <ListItemIcon><AddIcon /></ListItemIcon>
+                <ListItemText primary={"Add File"} />
+              </ListItem>
             </List>
           </div>
         </Drawer>
@@ -94,16 +95,19 @@ class HomePage extends Component {
           <Box flexGrow={1} mt={8} overflow={'hidden'}>
             <EmptyState
               image={<InsertBlockIllustration />}
-              title="RMUIF"
-              description="Supercharged version of Create React App with all the bells and whistles."
+              title="Welcome to Harmony!"
+              description="Sign in to get started, or try out one of our template files at the top left!"
             />
-            <Editor
-              theme={theme.dark ? 'vs-dark' : 'light'}
-              defaultLanguage="harmony"
-              beforeMount={this.handleEditorHarmonyCustomLang}
-              defaultValue=""
-              onChange={handleEditorChange}
-            />
+            {project && 
+              <Editor
+                theme={theme.dark ? 'vs-dark' : 'light'}
+                defaultLanguage="harmony"
+                beforeMount={this.handleEditorHarmonyCustomLang}
+                path={project.activeFile}
+                defaultValue={project.files.find(e => e.name === project.activeFile).text}
+                onChange={handleEditorChange}
+              />
+            }
           </Box>
         </Box>
       </Box>

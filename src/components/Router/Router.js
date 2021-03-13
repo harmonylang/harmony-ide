@@ -12,7 +12,7 @@ import NotFoundPage from '../NotFoundPage'
 class Router extends Component {
   render() {
     // Properties
-    const { user, roles, theme, bar, handleEditorChange } = this.props
+    const { user, roles, theme, project, bar, addFileRequest, setFileActive, handleEditorChange } = this.props;
 
     // Functions
     const { openSnackbar } = this.props
@@ -26,9 +26,11 @@ class Router extends Component {
             <HomePage
               user={user}
               theme={theme}
+              project={project}
+              addFileRequest={addFileRequest}
+              setFileActive={setFileActive}
               handleEditorChange={handleEditorChange}
-              openSnackbar={openSnackbar}
-            />
+              openSnackbar={openSnackbar} />
           </Route>
 
           <Route path="/admin">
