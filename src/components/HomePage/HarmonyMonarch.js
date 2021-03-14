@@ -22,7 +22,11 @@ const harmonyMonarch = {
     'trap',
   ],
 
+  reservedVars: ['result'],
+
   constants: ['True', 'False', 'None', 'inf'],
+
+  typeStorages: ['let', 'const'],
 
   controlKeywords: [
     'as', //TODO: as in "except Exception as e:"
@@ -37,25 +41,20 @@ const harmonyMonarch = {
     'except',
     'finally',
     'from',
-    'for',
     'global',
     'if',
     'import',
-    'in', //TODO: only if it follows "for"
     'pass',
-    'such that', //TODO: multiple whitespace between the two words allowed
     'try',
     'where',
     'while',
     'with',
   ],
 
-  typeStorages: ['let', 'const', 'def'],
-
   operatorKeywords: [
     'and',
     'or',
-    'in', //TODO: Due to collision with for..in, the linting is wrong when 'in' is an operator
+    'in',
     'not',
     '=>',
     '&',
@@ -113,8 +112,10 @@ const harmonyMonarch = {
 
       [/[,:;]/, 'delimiter'],
       [/[{}[\]()]/, '@brackets'],
-
       [/@[a-zA-Z]\w*/, 'tag'],
+      [/\bdef\b/, 'storage.type', '@funcDecl'],
+      [/\bfor\b/, 'keyword.control', '@forStmts'],
+      [/\bsuch\b\s+\bthat\b/, 'keyword.control'],
       [
         /[a-zA-Z]\w*/,
         {
@@ -122,9 +123,10 @@ const harmonyMonarch = {
             '@keywords': 'keyword',
             '@builtInFunctions': 'function.builtin',
             '@constants': 'constant.language',
+            '@typeStorages': 'storage.type',
+            '@reservedVars': 'variable.language.special',
             '@controlKeywords': 'keyword.control',
             '@operatorKeywords': 'keyword.operator',
-            '@typeStorages': 'storage.type',
             '@default': 'identifier',
           },
         },
@@ -142,7 +144,7 @@ const harmonyMonarch = {
 
     // Deal with white space, including single and multi-line comments
     whitespace: [
-      [/\s+/, 'white'],
+      [/\s+/, ''],
       [/(^#.*$)/, 'comment'],
       [/('''.*''')|(""".*""")/, 'string'],
       [/'''.*$/, 'string', '@endDocString'],
@@ -159,9 +161,11 @@ const harmonyMonarch = {
       [/.*$/, 'string'],
     ],
 
-    // Recognize hex, negatives, decimals, imaginaries, longs, and scientific notation
+    // Recognize hex, octal, binary, negatives, decimals, imaginaries, longs, and scientific notation
     numbers: [
-      [/-?0x([abcdef]|[ABCDEF]|\d)+[lL]?/, 'number.hex'],
+      [/-?0[xX]([abcdef]|[ABCDEF]|\d)+[lL]?/, 'number.hex'],
+      [/-?0[oO]([0-7])+[lL]?/, 'number.octal'],
+      [/-?0[bB]([01])+[lL]?/, 'number.bin'],
       [/-?(\d*\.)?\d+([eE][+-]?\d+)?[jJ]?[lL]?/, 'number'],
     ],
 
@@ -185,6 +189,29 @@ const harmonyMonarch = {
       [/\\./, 'string'],
       [/"/, 'string.escape', '@popall'],
       [/\\$/, 'string'],
+    ],
+
+    funcDecl: [
+      [/\s+/, ''],
+      [/(([a-zA-Z]|_)\w*)/, 'entity.name.function'],
+      [/\(/, '@brackets', '@funcParams'],
+    ],
+
+    funcParams: [
+      [/\s+/, ''],
+      [/([a-zA-Z]|_\w*)/, 'variable.parameter.function'],
+      [/,/, ''],
+      [/\)/, '@brackets', '@popall'],
+    ],
+
+    forStmts: [
+      [/\s+/, ''],
+      [/(([a-zA-Z]|_)\w*)/, 'identifier', '@endForStmts'],
+    ],
+
+    endForStmts: [
+      [/\s+/, ''],
+      [/\bin\b/, 'keyword.control', '@popall'],
     ],
   },
 }

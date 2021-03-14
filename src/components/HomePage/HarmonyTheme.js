@@ -4,6 +4,19 @@ const harmonyTheme = [
     foreground: '#DCDCAA',
   },
   {
+    token: 'constant.language',
+    foreground: '#569CD6',
+    background: '#1E1E1E',
+  },
+  {
+    token: 'variable.language.special',
+    foreground: '#569CD6',
+  },
+  {
+    token: 'storage.type',
+    foreground: '#569CD6',
+  },
+  {
     token: 'keyword.control',
     foreground: '#C586C0',
     background: '#1E1E1E',
@@ -14,13 +27,17 @@ const harmonyTheme = [
     background: '#1E1E1E',
   },
   {
-    token: 'constant.language',
-    foreground: '#569CD6',
+    token: 'entity.name.function',
+    foreground: '#DCDCAA',
     background: '#1E1E1E',
   },
   {
-    token: 'storage.type',
-    foreground: '#569CD6',
+    token: 'variable.parameter.function',
+    foreground: '#9CDCFE',
+  },
+  {
+    token: 'number',
+    foreground: '#B5CEA8',
   },
 ]
 
