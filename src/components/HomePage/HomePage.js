@@ -6,6 +6,7 @@ import { withRouter } from 'react-router-dom'
 
 import EmptyState from '../EmptyState'
 import HarmonyMonarch from './HarmonyMonarch'
+import HarmonyTheme from './HarmonyTheme'
 import { ReactComponent as InsertBlockIllustration } from '../../illustrations/insert-block.svg'
 
 import Editor from '@monaco-editor/react'
@@ -53,6 +54,11 @@ const styles = (theme) => ({
 
 class HomePage extends Component {
   handleEditorHarmonyCustomLang(monaco) {
+    monaco.editor.defineTheme('harmonyTheme', {
+      base: this.props.theme.dark ? 'vs-dark' : 'light',
+      inherit: true,
+      rules: HarmonyTheme,
+    })
     monaco.languages.register({
       id: 'harmony',
     })
@@ -60,7 +66,14 @@ class HomePage extends Component {
   }
 
   render() {
-    const { classes, theme, project, addFileRequest, setFileActive, handleEditorChange } = this.props;
+    const {
+      classes,
+      theme,
+      project,
+      addFileRequest,
+      setFileActive,
+      handleEditorChange,
+    } = this.props
 
     return (
       <Box className={classes.root}>
@@ -74,19 +87,25 @@ class HomePage extends Component {
           <Toolbar />
           <div className={classes.drawerContainer}>
             <List>
-              {project && project.files.map((text, index, arr) => (
-                <ListItem
-                  button
-                  key={text.name}
-                  selected={text.name === project.activeFile}
-                  onClick={() => setFileActive(text.name)} >
-                  <ListItemIcon><FileIcon /></ListItemIcon>
-                  <ListItemText primary={text.name} />
-                </ListItem>
-              ))}
-              <ListItem button key={"add-file"} onClick={addFileRequest}>
-                <ListItemIcon><AddIcon /></ListItemIcon>
-                <ListItemText primary={"Add File"} />
+              {project &&
+                project.files.map((text, index, arr) => (
+                  <ListItem
+                    button
+                    key={text.name}
+                    selected={text.name === project.activeFile}
+                    onClick={() => setFileActive(text.name)}
+                  >
+                    <ListItemIcon>
+                      <FileIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={text.name} />
+                  </ListItem>
+                ))}
+              <ListItem button key={'add-file'} onClick={addFileRequest}>
+                <ListItemIcon>
+                  <AddIcon />
+                </ListItemIcon>
+                <ListItemText primary={'Add File'} />
               </ListItem>
             </List>
           </div>
@@ -98,16 +117,18 @@ class HomePage extends Component {
               title="Welcome to Harmony!"
               description="Sign in to get started, or try out one of our template files at the top left!"
             />
-            {project && 
+            {project && (
               <Editor
-                theme={theme.dark ? 'vs-dark' : 'light'}
+                theme="harmonyTheme"
                 defaultLanguage="harmony"
-                beforeMount={this.handleEditorHarmonyCustomLang}
+                beforeMount={this.handleEditorHarmonyCustomLang.bind(this)}
                 path={project.activeFile}
-                defaultValue={project.files.find(e => e.name === project.activeFile).text}
+                defaultValue={
+                  project.files.find((e) => e.name === project.activeFile).text
+                }
                 onChange={handleEditorChange}
               />
-            }
+            )}
           </Box>
         </Box>
       </Box>
