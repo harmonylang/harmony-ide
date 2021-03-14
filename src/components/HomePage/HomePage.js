@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useRef, useEffect } from 'react'
 
 import PropTypes from 'prop-types'
 
@@ -9,7 +9,7 @@ import HarmonyMonarch from './HarmonyMonarch'
 import { HarmonyThemeDark, HarmonyThemeLight } from './HarmonyTheme'
 import { ReactComponent as InsertBlockIllustration } from '../../illustrations/insert-block.svg'
 
-import Editor, { useMonaco } from '@monaco-editor/react'
+import Editor from '@monaco-editor/react'
 
 import { withStyles } from '@material-ui/styles'
 import {
@@ -60,20 +60,33 @@ const HomePage = ({
   setFileActive,
   handleEditorChange,
 }) => {
-  const monaco = useMonaco()
+  const monacoRef = useRef(null)
+
+  const handleEditorWillMount = (monaco) => {
+    monaco.editor.defineTheme('harmonyTheme', {
+      base: theme.dark ? 'vs-dark' : 'vs',
+      inherit: true,
+      rules: theme.dark ? HarmonyThemeDark : HarmonyThemeLight,
+    })
+    monaco.languages.register({
+      id: 'harmony',
+    })
+    monaco.languages.setMonarchTokensProvider('harmony', HarmonyMonarch)
+  }
+
+  const handleEditorDidMount = (editor, monaco) => {
+    monacoRef.current = monaco
+  }
+
   useEffect(() => {
-    if (monaco) {
-      monaco.editor.defineTheme('harmonyTheme', {
+    if (monacoRef.current) {
+      monacoRef.current.editor.defineTheme('harmonyTheme', {
         base: theme.dark ? 'vs-dark' : 'vs',
         inherit: true,
         rules: theme.dark ? HarmonyThemeDark : HarmonyThemeLight,
       })
-      monaco.languages.register({
-        id: 'harmony',
-      })
-      monaco.languages.setMonarchTokensProvider('harmony', HarmonyMonarch)
     }
-  }, [monaco, theme.dark])
+  }, [theme.dark])
 
   return (
     <Box className={classes.root}>
@@ -126,6 +139,8 @@ const HomePage = ({
                 project.files.find((e) => e.name === project.activeFile).text
               }
               onChange={handleEditorChange}
+              beforeMount={handleEditorWillMount}
+              onMount={handleEditorDidMount}
             />
           )}
         </Box>
