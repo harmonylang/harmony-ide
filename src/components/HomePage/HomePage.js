@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { Component } from 'react'
 
 import PropTypes from 'prop-types'
 
@@ -52,21 +52,17 @@ const styles = (theme) => ({
   },
 })
 
-const HomePage = ({
-  classes,
-  theme,
-  project,
-  addFileRequest,
-  setFileActive,
-  handleEditorChange,
-}) => {
-  const monacoRef = useRef(null)
-
-  const handleEditorWillMount = (monaco) => {
-    monaco.editor.defineTheme('harmonyTheme', {
-      base: theme.dark ? 'vs-dark' : 'vs',
+class HomePage extends Component {
+  handleEditorHarmonyCustomLang(monaco) {
+    monaco.editor.defineTheme('harmonyThemeDark', {
+      base: 'vs-dark',
       inherit: true,
-      rules: theme.dark ? HarmonyThemeDark : HarmonyThemeLight,
+      rules: HarmonyThemeDark,
+    })
+    monaco.editor.defineTheme('harmonyThemeLight', {
+      base: 'vs',
+      inherit: true,
+      rules: HarmonyThemeLight,
     })
     monaco.languages.register({
       id: 'harmony',
@@ -74,79 +70,75 @@ const HomePage = ({
     monaco.languages.setMonarchTokensProvider('harmony', HarmonyMonarch)
   }
 
-  const handleEditorDidMount = (editor, monaco) => {
-    monacoRef.current = monaco
-  }
+  render() {
+    const {
+      classes,
+      theme,
+      project,
+      addFileRequest,
+      setFileActive,
+      handleEditorChange,
+    } = this.props
 
-  useEffect(() => {
-    if (monacoRef.current) {
-      monacoRef.current.editor.defineTheme('harmonyTheme', {
-        base: theme.dark ? 'vs-dark' : 'vs',
-        inherit: true,
-        rules: theme.dark ? HarmonyThemeDark : HarmonyThemeLight,
-      })
-    }
-  }, [theme.dark])
-
-  return (
-    <Box className={classes.root}>
-      <Drawer
-        className={classes.drawer}
-        variant="permanent"
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-      >
-        <Toolbar />
-        <div className={classes.drawerContainer}>
-          <List>
-            {project &&
-              project.files.map((text, index, arr) => (
-                <ListItem
-                  button
-                  key={text.name}
-                  selected={text.name === project.activeFile}
-                  onClick={() => setFileActive(text.name)}
-                >
-                  <ListItemIcon>
-                    <FileIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={text.name} />
-                </ListItem>
-              ))}
-            <ListItem button key={'add-file'} onClick={addFileRequest}>
-              <ListItemIcon>
-                <AddIcon />
-              </ListItemIcon>
-              <ListItemText primary={'Add File'} />
-            </ListItem>
-          </List>
-        </div>
-      </Drawer>
-      <Box className={classes.content}>
-        <Box flexGrow={1} mt={8} overflow={'hidden'}>
-          <EmptyState
-            image={<InsertBlockIllustration />}
-            title="Welcome to Harmony!"
-            description="Sign in to get started, or try out one of our template files at the top left!"
-          />
-          {project && (
-            <Editor
-              theme="harmonyTheme"
-              defaultLanguage="harmony"
-              path={project.activeFile}
-              defaultValue={
-                project.files.find((e) => e.name === project.activeFile).text
-              }
-              onChange={handleEditorChange}
-              beforeMount={handleEditorWillMount}
-              onMount={handleEditorDidMount}
+    return (
+      <Box className={classes.root}>
+        <Drawer
+          className={classes.drawer}
+          variant="permanent"
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+        >
+          <Toolbar />
+          <div className={classes.drawerContainer}>
+            <List>
+              {project &&
+                project.files.map((text, index, arr) => (
+                  <ListItem
+                    button
+                    key={text.name}
+                    selected={text.name === project.activeFile}
+                    onClick={() => setFileActive(text.name)}
+                  >
+                    <ListItemIcon>
+                      <FileIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={text.name} />
+                  </ListItem>
+                ))}
+              <ListItem button key={'add-file'} onClick={addFileRequest}>
+                <ListItemIcon>
+                  <AddIcon />
+                </ListItemIcon>
+                <ListItemText primary={'Add File'} />
+              </ListItem>
+            </List>
+          </div>
+        </Drawer>
+        <Box className={classes.content}>
+          <Box flexGrow={1} mt={8} overflow={'hidden'}>
+            <EmptyState
+              image={<InsertBlockIllustration />}
+              title="Welcome to Harmony!"
+              description="Sign in to get started, or try out one of our template files at the top left!"
             />
-          )}
+            {project && (
+              <Editor
+                theme={theme.dark ? 'harmonyThemeDark' : 'harmonyThemeLight'}
+                defaultLanguage="harmony"
+                beforeMount={this.handleEditorHarmonyCustomLang.bind(this)}
+                path={project.activeFile}
+                defaultValue={
+                  project.files.find((e) => e.name === project.activeFile).text
+                }
+                onChange={handleEditorChange}
+              />
+            )}
+          </Box>
         </Box>
       </Box>
-    </Box>
-  )
+    )
+  }
 }
 
 HomePage.propTypes = {
