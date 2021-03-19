@@ -114,13 +114,19 @@ class Bar extends Component {
                 {process.env.REACT_APP_TITLE}
               </Typography>
             </Box>
-
           </Box>
 
           <Box mr={2}>
-            <ButtonGroup color="default" aria-label="outlined secondary button group">
-              <Button><RunIcon onClick={onRunHarmony} /></Button>
-              <Button><SaveIcon onClick={onSaveProject} /></Button>
+            <ButtonGroup
+              color="default"
+              aria-label="outlined secondary button group"
+            >
+              <Button>
+                <RunIcon onClick={() => onRunHarmony()} />
+              </Button>
+              <Button>
+                <SaveIcon onClick={() => onSaveProject()} />
+              </Button>
             </ButtonGroup>
           </Box>
 

@@ -111,8 +111,6 @@ class HomePage extends Component {
       theme,
       project,
       addFileRequest,
-      renameFileRequest,
-      deleteFileRequest,
       setFileActive,
       handleEditorChange,
       harmonyPanelRef,
@@ -177,7 +175,7 @@ class HomePage extends Component {
             <EmptyState
               image={<InsertBlockIllustration />}
               title="Welcome to Harmony!"
-              description="Sign in to get started, or try out one of our template files at the top left!"
+              description="Sign in to access your files, or start a new one at the top left!"
             />
             {project.activeFile && (
               <Editor

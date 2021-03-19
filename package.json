@@ -2,6 +2,7 @@
   "name": "harmony-ide",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://harmony.cs.cornell.edu/ide",
   "dependencies": {
     "@material-ui/codemod": "^4.5.0",
     "@material-ui/core": "^4.11.2",
