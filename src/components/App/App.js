@@ -147,13 +147,23 @@ class App extends Component {
     currentProject.files.forEach((element) => {
       if (element.name === currentProject.activeFile) {
         element.text = value
+        element.hasChanges = true
       }
     })
     this.setState({ currentProject: currentProject })
   }
 
   saveCurrentProject = () => {
-    drive.updateProject(this.state.currentProject)
+    if (this.state.user) {
+      drive.updateProject(this.state.currentProject)
+      var currentProject = this.state.currentProject
+      currentProject.files.forEach((element) => {
+        element.hasChanges = false
+      })
+      this.setState({ currentProject: currentProject })
+    } else {
+      this.setState({ signUpDialog: { open: true } })
+    }
   }
 
   startLoading = () => {

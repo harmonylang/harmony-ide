@@ -107,7 +107,9 @@ class HomePage extends Component {
                     <ListItemIcon>
                       <FileIcon />
                     </ListItemIcon>
-                    <ListItemText primary={text.name} />
+                    <ListItemText
+                      primary={text.name + (text.hasChanges ? '*' : '')}
+                    />
                   </ListItem>
                 ))}
               <ListItem button key={'add-file'} onClick={addFileRequest}>
@@ -126,7 +128,7 @@ class HomePage extends Component {
               title="Welcome to Harmony!"
               description="Sign in to get started, or try out one of our template files at the top left!"
             />
-            {project && (
+            {project.activeFile && (
               <Editor
                 theme={theme.dark ? 'harmonyThemeDark' : 'harmonyThemeLight'}
                 defaultLanguage="harmony"
