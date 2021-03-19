@@ -22,6 +22,7 @@ import {
   Toolbar,
 } from '@material-ui/core'
 import { Description as FileIcon, Add as AddIcon } from '@material-ui/icons'
+import HarmonyPanel from '../HarmonyPanel/HarmonyPanel'
 
 const drawerWidth = 240
 
@@ -78,6 +79,9 @@ class HomePage extends Component {
       addFileRequest,
       setFileActive,
       handleEditorChange,
+      harmonyPanelRef,
+      setHarmonyPanelWidth,
+      harmonyPanelState,
     } = this.props
 
     return (
@@ -136,6 +140,11 @@ class HomePage extends Component {
             )}
           </Box>
         </Box>
+        <HarmonyPanel
+          harmonyPanelRef={harmonyPanelRef}
+          setHarmonyPanelWidth={setHarmonyPanelWidth}
+          harmonyPanelState={harmonyPanelState}
+        />
       </Box>
     )
   }

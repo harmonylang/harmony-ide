@@ -4,12 +4,12 @@ import readingTime from 'reading-time'
 
 import { MuiThemeProvider } from '@material-ui/core/styles'
 
-import { CssBaseline, Button, Snackbar } from '@material-ui/core'
+import { CssBaseline, Button, Snackbar, AppBar } from '@material-ui/core'
 
-import { auth, firestore } from "../../firebase";
-import authentication from "../../services/authentication";
-import appearance from "../../services/appearance";
-import drive from "../../services/drive";
+import { auth, firestore } from '../../firebase'
+import authentication from '../../services/authentication'
+import appearance from '../../services/appearance'
+import drive from '../../services/drive'
 
 import ErrorBoundary from '../ErrorBoundary'
 import LaunchScreen from '../LaunchScreen'
@@ -17,11 +17,12 @@ import Bar from '../Bar'
 import Router from '../Router'
 import DialogHost from '../DialogHost'
 
-import JSZip, { files } from "jszip";
-import axios from 'axios';
-import * as FormData from 'form-data';
+import JSZip, { files } from 'jszip'
+import axios from 'axios'
+import * as FormData from 'form-data'
 
-const HARMONY_SERVER_API = "http://localhost:8080/";
+import parseCharmony from '../HarmonyPanel/charmony/CharmonyData'
+const HARMONY_SERVER_API = 'https://harmonylang.herokuapp.com/'
 
 const initialState = {
   ready: false,
@@ -30,7 +31,8 @@ const initialState = {
   user: null,
   userData: null,
   currentProject: drive.currentProject,
-  editorValue: "",
+  editorValue: '',
+  analysisValue: {},
   roles: [],
 
   aboutDialog: {
@@ -61,6 +63,11 @@ const initialState = {
     open: false,
   },
 
+  harmonyPanel: {
+    width: 0, // Default Drawer Width
+    savedWidth: 900,
+  },
+
   snackbar: {
     autoHideDuration: 0,
     message: '',
@@ -73,6 +80,7 @@ class App extends Component {
     super(props)
 
     this.state = initialState
+    this.harmonyPanelRef = React.createRef()
   }
 
   resetState = (callback) => {
@@ -88,63 +96,139 @@ class App extends Component {
     )
   }
 
+  openSnackbar = (message, autoHideDuration = 2, callback) => {
+    this.setState(
+      {
+        snackbar: {
+          autoHideDuration: readingTime(message).time * autoHideDuration,
+          message,
+          open: true,
+        },
+      },
+      () => {
+        if (callback && typeof callback === 'function') {
+          callback()
+        }
+      }
+    )
+  }
+
+  closeSnackbar = (clearMessage = false) => {
+    const { snackbar } = this.state
+
+    this.setState({
+      snackbar: {
+        message: clearMessage ? '' : snackbar.message,
+        open: false,
+      },
+    })
+  }
+
   addFileToProject = (fileName) => {
-    var currentProject = this.state.currentProject;
-    currentProject.files.push({ name: fileName, value: "" })
-    this.setState({ currentProject: currentProject, addFileDialog: { open: false } });
+    var currentProject = this.state.currentProject
+    currentProject.files.push({ name: fileName, value: '' })
+    this.setState({
+      currentProject: currentProject,
+      addFileDialog: { open: false },
+    })
   }
 
   setFileAsActive = (fileName) => {
-    var currentProject = this.state.currentProject;
+    var currentProject = this.state.currentProject
     currentProject.activeFile = fileName
-    this.setState({ currentProject: currentProject, addFileDialog: { open: false } });
+    this.setState({
+      currentProject: currentProject,
+      addFileDialog: { open: false },
+    })
   }
 
   updateEditorValue = (value, event) => {
-    var currentProject = this.state.currentProject;
-    currentProject.files.forEach(element => {
+    var currentProject = this.state.currentProject
+    currentProject.files.forEach((element) => {
       if (element.name === currentProject.activeFile) {
-        element.text = value;
+        element.text = value
       }
-    });
-    this.setState({ currentProject: currentProject });
-  };
+    })
+    this.setState({ currentProject: currentProject })
+  }
 
   saveCurrentProject = () => {
-    drive.updateProject(this.state.currentProject);
+    drive.updateProject(this.state.currentProject)
+  }
+
+  startLoading = () => {
+    this.harmonyPanelRef.current.contentWindow.postMessage({
+      command: 'start',
+      jsonData: null,
+    })
+  }
+
+  updateMessage = (message) => {
+    this.harmonyPanelRef.current.contentWindow.postMessage({
+      command: 'message',
+      jsonData: message,
+    })
+  }
+
+  loadData = (data) => {
+    const harmonyJsonData = parseCharmony(data)
+    this.harmonyPanelRef.current.contentWindow.postMessage({
+      command: 'load',
+      jsonData: harmonyJsonData,
+    })
+  }
+
+  setHarmonyPanelWidth = (
+    width,
+    isOpen = this.state.harmonyPanel.width != 0
+  ) => {
+    this.setState({
+      harmonyPanel: { width: isOpen ? width : 0, savedWidth: width },
+    })
   }
 
   runHarmonyAnalysis = () => {
-    var zip = new JSZip();
-    var currentProject = this.state.currentProject;
-    currentProject.files.forEach(element => {
-      zip.file(element.name, element.text);
-    });
-    zip.generateAsync({ type: "blob" }).then(function (blob) {
-      const formData = new FormData();
-      formData.append('file', blob, "files.zip");
-      formData.append("main", currentProject.activeFile);
+    var zip = new JSZip()
+    var currentProject = this.state.currentProject
+    currentProject.files.forEach((element) => {
+      zip.file(element.name, element.text)
+    })
+    const app = this
+    app.startLoading()
+    app.setHarmonyPanelWidth(this.state.harmonyPanel.savedWidth, true)
+    zip.generateAsync({ type: 'blob' }).then(function (blob) {
+      const formData = new FormData()
+      formData.append('file', blob, 'files.zip')
+      formData.append('main', `["${currentProject.activeFile}"]`)
+      formData.append('version', '1.0.0')
+      formData.append('source', 'web-ide')
       try {
-        axios.post(HARMONY_SERVER_API + "check",
-          formData,
-          {
-            headers: { "Content-Type": "multipart/form-data" }
-          }).then((response) => {
+        axios
+          .post(HARMONY_SERVER_API + 'check', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          })
+          .then((response) => {
             if (200 <= response.status && response.status < 300) {
-              const data = response.data;
-              if (data.status === "FAILURE") {
-                const json = data.jsonData;
-                return console.log(json);
+              const data = response.data
+              if (data.status === 'FAILURE') {
+                const json = data.jsonData
+                app.loadData(json)
+                return
               }
-              return this.openSnackbar(data.message);
+              app.openSnackbar(data.message)
+              app.updateMessage(data.message)
             } else {
-              return this.openSnackbar(response.data);
+              app.openSnackbar(response.data)
             }
-          });
+          })
+          .catch((e) => {
+            app.openSnackbar(e.toString())
+            app.updateMessage(e.toString())
+          })
       } catch (err) {
-        console.log(err);
+        console.log(err)
       }
-    });
+    })
   }
 
   setTheme = (theme, callback) => {
@@ -290,34 +374,6 @@ class App extends Component {
     )
   }
 
-  openSnackbar = (message, autoHideDuration = 2, callback) => {
-    this.setState(
-      {
-        snackbar: {
-          autoHideDuration: readingTime(message).time * autoHideDuration,
-          message,
-          open: true,
-        },
-      },
-      () => {
-        if (callback && typeof callback === 'function') {
-          callback()
-        }
-      }
-    )
-  }
-
-  closeSnackbar = (clearMessage = false) => {
-    const { snackbar } = this.state
-
-    this.setState({
-      snackbar: {
-        message: clearMessage ? '' : snackbar.message,
-        open: false,
-      },
-    })
-  }
-
   render() {
     const {
       ready,
@@ -326,8 +382,8 @@ class App extends Component {
       user,
       userData,
       roles,
-      currentProject
-    } = this.state;
+      currentProject,
+    } = this.state
 
     const {
       aboutDialog,
@@ -355,9 +411,12 @@ class App extends Component {
                 roles={roles}
                 theme={theme}
                 project={currentProject}
-                addFileRequest={() => this.openDialog("addFileDialog")}
+                addFileRequest={() => this.openDialog('addFileDialog')}
                 setFileActive={this.setFileAsActive}
                 handleEditorChange={this.updateEditorValue}
+                harmonyPanelRef={this.harmonyPanelRef}
+                setHarmonyPanelWidth={this.setHarmonyPanelWidth}
+                harmonyPanelState={this.state.harmonyPanel}
                 bar={
                   <Bar
                     performingAction={performingAction}
@@ -367,11 +426,11 @@ class App extends Component {
                     roles={roles}
                     onRunHarmony={this.runHarmonyAnalysis}
                     onSaveProject={this.saveCurrentProject}
-                    onSignUpClick={() => this.openDialog("signUpDialog")}
-                    onSignInClick={() => this.openDialog("signInDialog")}
-                    onAboutClick={() => this.openDialog("aboutDialog")}
-                    onSettingsClick={() => this.openDialog("settingsDialog")}
-                    onSignOutClick={() => this.openDialog("signOutDialog")}
+                    onSignUpClick={() => this.openDialog('signUpDialog')}
+                    onSignInClick={() => this.openDialog('signInDialog')}
+                    onAboutClick={() => this.openDialog('aboutDialog')}
+                    onSettingsClick={() => this.openDialog('settingsDialog')}
+                    onSignOutClick={() => this.openDialog('signOutDialog')}
                   />
                 }
                 openSnackbar={this.openSnackbar}
@@ -395,10 +454,10 @@ class App extends Component {
                   addFileDialog: {
                     dialogProps: {
                       open: addFileDialog.open,
-                      onClose: () => this.closeDialog("addFileDialog"),
+                      onClose: () => this.closeDialog('addFileDialog'),
                     },
-                    handleClose: () => this.closeDialog("addFileDialog"),
-                    handleAddFile: this.addFileToProject
+                    handleClose: () => this.closeDialog('addFileDialog'),
+                    handleAddFile: this.addFileToProject,
                   },
 
                   signUpDialog: {
@@ -536,17 +595,22 @@ class App extends Component {
                       user: user,
                       userData: data,
                       roles: value || [],
-                    });
-                  });
+                    })
+                  })
 
                   if (!data.lastActiveProject) {
-                    var newProject = drive.createProject();
+                    var newProject = drive.createProject()
                     drive.updateProject(newProject)
-                    this.setState({ currentProject: newProject, ready: true });
+                    this.setState({ currentProject: newProject, ready: true })
                   } else {
-                    drive.retrieveProject(data.lastActiveProject).then((currentProject) => {
-                      this.setState({ currentProject: currentProject, ready: true });
-                    });
+                    drive
+                      .retrieveProject(data.lastActiveProject)
+                      .then((currentProject) => {
+                        this.setState({
+                          currentProject: currentProject,
+                          ready: true,
+                        })
+                      })
                   }
                 })
                 .catch((reason) => {
