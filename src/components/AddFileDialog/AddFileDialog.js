@@ -1,22 +1,21 @@
-import React, { Component } from "react";
+import React, { Component } from 'react'
 
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types'
 
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  DialogContentText,
   InputAdornment,
   Button,
-  TextField
-} from "@material-ui/core";
+  TextField,
+} from '@material-ui/core'
 
 class AddFileDialog extends Component {
   constructor(props) {
-    super(props);
-    this.state = { dialogText: "" }
+    super(props)
+    this.state = { dialogText: '' }
   }
 
   handleChangedText = (event) => {
@@ -25,10 +24,16 @@ class AddFileDialog extends Component {
 
   render() {
     // Dialog Properties
-    const { dialogProps } = this.props;
+    const { dialogProps } = this.props
 
     // Custom Properties
-    const { title, handleClose, handleAddFile } = this.props;
+    const {
+      title,
+      defaultValue,
+      acceptButtonText,
+      handleClose,
+      handleAddFile,
+    } = this.props
 
     return (
       <Dialog {...dialogProps}>
@@ -41,21 +46,29 @@ class AddFileDialog extends Component {
             id="name"
             label="File Name"
             type="text"
+            defaultValue={defaultValue}
             onChange={this.handleChangedText}
             fullWidth
-            endAdornment={<InputAdornment position="end">.hny</InputAdornment>}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">.hny</InputAdornment>
+              ),
+            }}
           />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={() => handleAddFile(this.state.dialogText)} color="primary">
-            Add
+          <Button
+            onClick={() => handleAddFile(this.state.dialogText)}
+            color="primary"
+          >
+            {acceptButtonText}
           </Button>
         </DialogActions>
       </Dialog>
-    );
+    )
   }
 }
 
@@ -67,6 +80,6 @@ AddFileDialog.propTypes = {
   title: PropTypes.string.isRequired,
   handleClose: PropTypes.func.isRequired,
   handleAddFile: PropTypes.func.isRequired,
-};
+}
 
-export default AddFileDialog;
+export default AddFileDialog

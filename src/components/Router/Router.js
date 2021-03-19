@@ -19,6 +19,8 @@ class Router extends Component {
       project,
       bar,
       addFileRequest,
+      renameFileRequest,
+      deleteFileRequest,
       setFileActive,
       handleEditorChange,
       harmonyPanelRef,
@@ -40,6 +42,8 @@ class Router extends Component {
               theme={theme}
               project={project}
               addFileRequest={addFileRequest}
+              renameFileRequest={renameFileRequest}
+              deleteFileRequest={deleteFileRequest}
               setFileActive={setFileActive}
               handleEditorChange={handleEditorChange}
               harmonyPanelRef={harmonyPanelRef}

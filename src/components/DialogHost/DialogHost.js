@@ -4,13 +4,13 @@ import PropTypes from 'prop-types'
 
 import { Hidden } from '@material-ui/core'
 
-import AboutDialog from "../AboutDialog";
-import SignUpDialog from "../SignUpDialog";
-import SignInDialog from "../SignInDialog";
-import SettingsDialog from "../SettingsDialog";
-import DeleteAccountDialog from "../DeleteAccountDialog";
-import AlertDialog from "../AlertDialog";
-import AddFileDialog from "../AddFileDialog";
+import AboutDialog from '../AboutDialog'
+import SignUpDialog from '../SignUpDialog'
+import SignInDialog from '../SignInDialog'
+import SettingsDialog from '../SettingsDialog'
+import DeleteAccountDialog from '../DeleteAccountDialog'
+import AlertDialog from '../AlertDialog'
+import AddFileDialog from '../AddFileDialog'
 
 class DialogHost extends Component {
   render() {
@@ -20,13 +20,13 @@ class DialogHost extends Component {
     // Functions
     const { openSnackbar } = this.props
 
-    const aboutDialog = dialogs.aboutDialog;
-    const addFileDialog = dialogs.addFileDialog;
-    const signUpDialog = dialogs.signUpDialog;
-    const signInDialog = dialogs.signInDialog;
-    const settingsDialog = dialogs.settingsDialog;
-    const deleteAccountDialog = dialogs.deleteAccountDialog;
-    const signOutDialog = dialogs.signOutDialog;
+    const aboutDialog = dialogs.aboutDialog
+    const addFileDialog = dialogs.addFileDialog
+    const signUpDialog = dialogs.signUpDialog
+    const signInDialog = dialogs.signInDialog
+    const settingsDialog = dialogs.settingsDialog
+    const deleteAccountDialog = dialogs.deleteAccountDialog
+    const signOutDialog = dialogs.signOutDialog
 
     return (
       <>
@@ -42,7 +42,9 @@ class DialogHost extends Component {
 
         <AddFileDialog
           dialogProps={addFileDialog.dialogProps}
-          title={"Add a new file"}
+          title={addFileDialog.title}
+          defaultValue={addFileDialog.defaultValue}
+          acceptButtonText={addFileDialog.acceptButtonText}
           handleClose={addFileDialog.handleClose}
           handleAddFile={addFileDialog.handleAddFile}
           {...addFileDialog.props}

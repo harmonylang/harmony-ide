@@ -1,6 +1,4 @@
-import camelCase from 'camelcase'
-
-import firebase, { analytics, auth, firestore } from '../firebase'
+import { auth, firestore } from '../firebase'
 
 const drive = {}
 

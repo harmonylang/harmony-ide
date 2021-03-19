@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import harmonyHtml from './charmony-v2'
 
@@ -88,7 +88,7 @@ export default function HarmonyPanel(props) {
         onClick={() =>
           props.setHarmonyPanelWidth(
             props.harmonyPanelState.savedWidth,
-            props.harmonyPanelState.width == 0
+            props.harmonyPanelState.width === 0
           )
         }
       >
@@ -99,6 +99,7 @@ export default function HarmonyPanel(props) {
         className={classes.dragger}
       />
       <iframe
+        title="HarmonyAnalysis"
         className={classes.harmonyPanel}
         srcDoc={harmonyPanelSrc}
         ref={props.harmonyPanelRef}

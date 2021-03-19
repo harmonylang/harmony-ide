@@ -22,9 +22,22 @@ import {
   Toolbar,
 } from '@material-ui/core'
 import { Description as FileIcon, Add as AddIcon } from '@material-ui/icons'
+
+import {
+  Menu,
+  Item,
+  Separator,
+  contextMenu,
+  animation as ContextMenuAnim,
+  theme as ContextMenuTheme,
+} from 'react-contexify'
+import 'react-contexify/dist/ReactContexify.css'
+
 import HarmonyPanel from '../HarmonyPanel/HarmonyPanel'
 
 const drawerWidth = 240
+
+const MENU_ID = 'files-context-menu'
 
 const styles = (theme) => ({
   root: {
@@ -71,12 +84,35 @@ class HomePage extends Component {
     monaco.languages.setMonarchTokensProvider('harmony', HarmonyMonarch)
   }
 
+  displayMenu = (e) => {
+    contextMenu.show({
+      id: MENU_ID,
+      event: e,
+      props: { id: e.currentTarget.id },
+    })
+  }
+
+  handleItemClick = ({ event, props, data, triggerEvent }) => {
+    switch (event.currentTarget.id) {
+      case 'rename':
+        console.log('rename')
+        this.props.renameFileRequest(props.id)
+        break
+      case 'delete':
+        console.log('delete')
+        this.props.deleteFileRequest(props.id)
+        break
+    }
+  }
+
   render() {
     const {
       classes,
       theme,
       project,
       addFileRequest,
+      renameFileRequest,
+      deleteFileRequest,
       setFileActive,
       handleEditorChange,
       harmonyPanelRef,
@@ -100,9 +136,11 @@ class HomePage extends Component {
                 project.files.map((text, index, arr) => (
                   <ListItem
                     button
+                    id={`${text.name}`}
                     key={text.name}
                     selected={text.name === project.activeFile}
                     onClick={() => setFileActive(text.name)}
+                    onContextMenu={this.displayMenu}
                   >
                     <ListItemIcon>
                       <FileIcon />
@@ -120,6 +158,19 @@ class HomePage extends Component {
               </ListItem>
             </List>
           </div>
+          <Menu
+            id={MENU_ID}
+            theme={theme.dark ? ContextMenuTheme.dark : ContextMenuTheme.light}
+            animation={ContextMenuAnim.slide}
+          >
+            <Item id="rename" onClick={this.handleItemClick}>
+              Rename
+            </Item>
+            <Separator />
+            <Item id="delete" onClick={this.handleItemClick}>
+              Delete
+            </Item>
+          </Menu>
         </Drawer>
         <Box className={classes.content}>
           <Box flexGrow={1} mt={8} overflow={'hidden'}>

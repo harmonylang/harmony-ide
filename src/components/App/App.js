@@ -4,7 +4,7 @@ import readingTime from 'reading-time'
 
 import { MuiThemeProvider } from '@material-ui/core/styles'
 
-import { CssBaseline, Button, Snackbar, AppBar } from '@material-ui/core'
+import { CssBaseline, Button, Snackbar } from '@material-ui/core'
 
 import { auth, firestore } from '../../firebase'
 import authentication from '../../services/authentication'
@@ -17,7 +17,7 @@ import Bar from '../Bar'
 import Router from '../Router'
 import DialogHost from '../DialogHost'
 
-import JSZip, { files } from 'jszip'
+import JSZip from 'jszip'
 import axios from 'axios'
 import * as FormData from 'form-data'
 
@@ -48,6 +48,10 @@ const initialState = {
   },
 
   addFileDialog: {
+    title: '',
+    defaultValue: '',
+    acceptButtonText: '',
+    acceptFunction: () => {},
     open: false,
   },
 
@@ -133,12 +137,43 @@ class App extends Component {
     })
   }
 
+  renameFileInProject = (fileName, newFileName) => {
+    var currentProject = this.state.currentProject
+    currentProject.files.forEach((element) => {
+      if (element.name === fileName) {
+        element.name = newFileName
+        element.hasChanges = true
+      }
+    })
+    if (currentProject.activeFile === fileName)
+      currentProject.activeFile = newFileName
+    if (currentProject.entryFile === fileName)
+      currentProject.entryFile = newFileName
+    this.setState({
+      currentProject: currentProject,
+      addFileDialog: { open: false },
+    })
+  }
+
+  removeFileFromProject = (fileName) => {
+    var currentProject = this.state.currentProject
+    currentProject.files = currentProject.files.filter((f) => {
+      return f.name !== fileName
+    })
+    if (currentProject.activeFile === fileName)
+      currentProject.activeFile = currentProject.files.first().name
+    if (currentProject.entryFile === fileName)
+      currentProject.entryFile = currentProject.files.first().name
+    this.setState({
+      currentProject: currentProject,
+    })
+  }
+
   setFileAsActive = (fileName) => {
     var currentProject = this.state.currentProject
     currentProject.activeFile = fileName
     this.setState({
       currentProject: currentProject,
-      addFileDialog: { open: false },
     })
   }
 
@@ -190,7 +225,7 @@ class App extends Component {
 
   setHarmonyPanelWidth = (
     width,
-    isOpen = this.state.harmonyPanel.width != 0
+    isOpen = this.state.harmonyPanel.width !== 0
   ) => {
     this.setState({
       harmonyPanel: { width: isOpen ? width : 0, savedWidth: width },
@@ -259,6 +294,37 @@ class App extends Component {
       },
       callback
     )
+  }
+
+  openAddFileDialog = () => {
+    this.setState({
+      addFileDialog: {
+        title: 'Add file to project',
+        defaultValue: '',
+        acceptButtonText: 'Add',
+        acceptFunction: (newFile) =>
+          this.addFileToProject(
+            newFile.endsWith('.hny') ? newFile : `${newFile}.hny`
+          ),
+        open: true,
+      },
+    })
+  }
+
+  openRenameFileDialog = (oldFile) => {
+    this.setState({
+      addFileDialog: {
+        title: `Rename ${oldFile}`,
+        defaultValue: oldFile.substring(0, oldFile.lastIndexOf('.')),
+        acceptButtonText: 'Rename',
+        acceptFunction: (newFile) =>
+          this.renameFileInProject(
+            oldFile,
+            newFile.endsWith('.hny') ? newFile : `${newFile}.hny`
+          ),
+        open: true,
+      },
+    })
   }
 
   openDialog = (dialogId, callback) => {
@@ -421,7 +487,9 @@ class App extends Component {
                 roles={roles}
                 theme={theme}
                 project={currentProject}
-                addFileRequest={() => this.openDialog('addFileDialog')}
+                addFileRequest={this.openAddFileDialog}
+                renameFileRequest={this.openRenameFileDialog}
+                deleteFileRequest={this.removeFileFromProject}
                 setFileActive={this.setFileAsActive}
                 handleEditorChange={this.updateEditorValue}
                 harmonyPanelRef={this.harmonyPanelRef}
@@ -466,8 +534,11 @@ class App extends Component {
                       open: addFileDialog.open,
                       onClose: () => this.closeDialog('addFileDialog'),
                     },
+                    title: addFileDialog.title,
+                    defaultValue: addFileDialog.defaultValue,
+                    acceptButtonText: addFileDialog.acceptButtonText,
                     handleClose: () => this.closeDialog('addFileDialog'),
-                    handleAddFile: this.addFileToProject,
+                    handleAddFile: addFileDialog.acceptFunction,
                   },
 
                   signUpDialog: {
