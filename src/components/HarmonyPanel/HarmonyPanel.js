@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 import { makeStyles } from '@material-ui/core/styles'
 import harmonyHtml from './charmony-v2'
 
@@ -44,24 +44,29 @@ const useStyles = makeStyles((theme) => ({
 
 export default function HarmonyPanel(props) {
   const classes = useStyles()
-  const [harmonyPanelSrc, setHarmonyPanelSrc] = React.useState(
-    defaultHarmonySrc
-  )
+  const [harmonyPanelSrc, setHarmonyPanelSrc] = useState(defaultHarmonySrc)
+  const [dragging, setDragging] = useState(false)
 
   const handleMouseDown = (e) => {
+    setDragging(true)
     document.addEventListener('mouseup', handleMouseUp, true)
     document.addEventListener('mousemove', handleMouseMove, true)
   }
 
   const handleMouseUp = () => {
+    setDragging(false)
     document.removeEventListener('mouseup', handleMouseUp, true)
     document.removeEventListener('mousemove', handleMouseMove, true)
   }
 
   const handleMouseMove = useCallback((e) => {
-    const newWidth = document.body.offsetWidth - e.clientX
-    if (newWidth > minDrawerWidth && newWidth < maxDrawerWidth) {
+    const newWidth = document.body.offsetWidth - e.clientX + 5
+    if (newWidth >= minDrawerWidth && newWidth <= maxDrawerWidth) {
       props.setHarmonyPanelWidth(newWidth, true)
+    } else if (newWidth > maxDrawerWidth) {
+      props.setHarmonyPanelWidth(maxDrawerWidth, true)
+    } else {
+      props.setHarmonyPanelWidth(minDrawerWidth, true)
     }
   }, [])
 
@@ -101,6 +106,7 @@ export default function HarmonyPanel(props) {
       <iframe
         title="HarmonyAnalysis"
         className={classes.harmonyPanel}
+        style={{ pointerEvents: dragging ? 'none' : 'auto' }}
         srcDoc={harmonyPanelSrc}
         ref={props.harmonyPanelRef}
       />
