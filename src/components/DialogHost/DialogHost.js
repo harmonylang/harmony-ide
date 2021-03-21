@@ -42,6 +42,7 @@ class DialogHost extends Component {
 
         <AddFileDialog
           dialogProps={addFileDialog.dialogProps}
+          newFile={addFileDialog.newFile}
           title={addFileDialog.title}
           defaultValue={addFileDialog.defaultValue}
           acceptButtonText={addFileDialog.acceptButtonText}

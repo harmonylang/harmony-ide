@@ -95,11 +95,9 @@ class HomePage extends Component {
   handleItemClick = ({ event, props, data, triggerEvent }) => {
     switch (event.currentTarget.id) {
       case 'rename':
-        console.log('rename')
         this.props.renameFileRequest(props.id)
         break
       case 'delete':
-        console.log('delete')
         this.props.deleteFileRequest(props.id)
         break
     }

@@ -23,6 +23,7 @@ import * as FormData from 'form-data'
 
 import parseCharmony from '../HarmonyPanel/charmony/CharmonyData'
 const HARMONY_SERVER_API = 'https://harmonylang.herokuapp.com/'
+const HARMONY_WEBSITE = 'https://harmony.cs.cornell.edu/'
 
 const initialState = {
   ready: false,
@@ -52,6 +53,7 @@ const initialState = {
     defaultValue: '',
     acceptButtonText: '',
     acceptFunction: () => {},
+    newFile: true,
     open: false,
   },
 
@@ -128,13 +130,61 @@ class App extends Component {
     })
   }
 
-  addFileToProject = (fileName) => {
+  addFileToProject = (fileName, template) => {
     var currentProject = this.state.currentProject
-    currentProject.files.push({ name: fileName, value: '' })
-    this.setState({
-      currentProject: currentProject,
-      addFileDialog: { open: false },
-    })
+    const app = this
+    if (template === '') {
+      currentProject.files.push({ name: fileName, text: '', hasChanges: true })
+      this.setState({
+        currentProject: currentProject,
+      })
+      this.closeDialog('addFileDialog')
+    } else {
+      try {
+        axios
+          .get(HARMONY_WEBSITE + 'code' + template, {
+            validateStatus() {
+              return true
+            },
+          })
+          .then((response) => {
+            if (200 <= response.status && response.status < 300) {
+              const data = response.data
+              currentProject.files.push({
+                name: fileName,
+                text: data,
+                hasChanges: true,
+              })
+              this.setState({
+                currentProject: currentProject,
+              })
+              this.closeDialog('addFileDialog')
+            }
+          })
+          .catch((e) => {
+            //backup: hosting from IDE;
+            fetch(`templates/${template}`)
+              .then((t) => t.text())
+              .then((text) => {
+                currentProject.files.push({
+                  name: fileName,
+                  text,
+                  hasChanges: true,
+                })
+                this.setState({
+                  currentProject: currentProject,
+                })
+                this.closeDialog('addFileDialog')
+              })
+              .catch(() => {
+                app.openSnackbar(e.toString())
+                app.updateMessage(e.toString())
+              })
+          })
+      } catch (err) {
+        console.log(err)
+      }
+    }
   }
 
   renameFileInProject = (fileName, newFileName) => {
@@ -161,9 +211,9 @@ class App extends Component {
       return f.name !== fileName
     })
     if (currentProject.activeFile === fileName)
-      currentProject.activeFile = currentProject.files.first().name
+      currentProject.activeFile = currentProject.files[0].name
     if (currentProject.entryFile === fileName)
-      currentProject.entryFile = currentProject.files.first().name
+      currentProject.entryFile = currentProject.files[0].name
     this.setState({
       currentProject: currentProject,
     })
@@ -190,11 +240,11 @@ class App extends Component {
 
   saveCurrentProject = () => {
     if (this.state.user) {
-      drive.updateProject(this.state.currentProject)
       var currentProject = this.state.currentProject
       currentProject.files.forEach((element) => {
         element.hasChanges = false
       })
+      drive.updateProject(currentProject)
       this.setState({ currentProject: currentProject })
     } else {
       this.setState({ signUpDialog: { open: true } })
@@ -251,6 +301,9 @@ class App extends Component {
         axios
           .post(HARMONY_SERVER_API + 'check', formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
+            validateStatus() {
+              return true
+            },
           })
           .then((response) => {
             if (200 <= response.status && response.status < 300) {
@@ -302,10 +355,12 @@ class App extends Component {
         title: 'Add file to project',
         defaultValue: '',
         acceptButtonText: 'Add',
-        acceptFunction: (newFile) =>
+        acceptFunction: (newFile, template) =>
           this.addFileToProject(
-            newFile.endsWith('.hny') ? newFile : `${newFile}.hny`
+            newFile.endsWith('.hny') ? newFile : `${newFile}.hny`,
+            template
           ),
+        newFile: true,
         open: true,
       },
     })
@@ -322,6 +377,7 @@ class App extends Component {
             oldFile,
             newFile.endsWith('.hny') ? newFile : `${newFile}.hny`
           ),
+        newFile: false,
         open: true,
       },
     })
@@ -524,7 +580,6 @@ class App extends Component {
                   aboutDialog: {
                     dialogProps: {
                       open: aboutDialog.open,
-
                       onClose: () => this.closeDialog('aboutDialog'),
                     },
                   },
@@ -534,6 +589,7 @@ class App extends Component {
                       open: addFileDialog.open,
                       onClose: () => this.closeDialog('addFileDialog'),
                     },
+                    newFile: addFileDialog.newFile,
                     title: addFileDialog.title,
                     defaultValue: addFileDialog.defaultValue,
                     acceptButtonText: addFileDialog.acceptButtonText,
