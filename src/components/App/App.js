@@ -163,7 +163,7 @@ class App extends Component {
           })
           .catch((e) => {
             //backup: hosting from IDE;
-            fetch(`templates/${template}`)
+            fetch(`${process.env.PUBLIC_URL}/templates/${template}`)
               .then((t) => t.text())
               .then((text) => {
                 currentProject.files.push({
