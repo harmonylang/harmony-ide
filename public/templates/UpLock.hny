@@ -1,0 +1,15 @@
+from synch import Lock, acquire, release
+
+count = 0
+countlock = Lock()
+done = [ False, False ]
+
+def thread(self):
+    acquire(?countlock)
+    count = count + 1
+    release(?countlock)
+    done[self] = True
+    await done[1 - self]
+
+spawn thread(0)
+spawn thread(1)
