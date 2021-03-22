@@ -101,6 +101,7 @@ class AddFileDialog extends Component {
             onClick={() =>
               handleAddFile(this.state.dialogText, this.state.template)
             }
+            disabled={this.state.dialogText.length === 0}
             color="primary"
           >
             {acceptButtonText}

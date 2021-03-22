@@ -23,7 +23,6 @@ import * as FormData from 'form-data'
 
 import parseCharmony from '../HarmonyPanel/charmony/CharmonyData'
 const HARMONY_SERVER_API = 'https://harmonylang.herokuapp.com/'
-const HARMONY_WEBSITE = 'https://harmony.cs.cornell.edu/'
 
 const initialState = {
   ready: false,
@@ -142,7 +141,7 @@ class App extends Component {
     } else {
       try {
         axios
-          .get(HARMONY_WEBSITE + 'code' + template, {
+          .get(process.env.REACT_APP_HOMEPAGE + 'code' + template, {
             validateStatus() {
               return true
             },
@@ -252,6 +251,7 @@ class App extends Component {
   }
 
   startLoading = () => {
+    this.harmonyPanelRef.current.contentWindow.location.reload()
     this.harmonyPanelRef.current.contentWindow.postMessage({
       command: 'start',
       jsonData: null,
@@ -295,7 +295,7 @@ class App extends Component {
       const formData = new FormData()
       formData.append('file', blob, 'files.zip')
       formData.append('main', `["${currentProject.activeFile}"]`)
-      formData.append('version', '1.0.0')
+      formData.append('version', process.env.REACT_APP_VERSION)
       formData.append('source', 'web-ide')
       try {
         axios

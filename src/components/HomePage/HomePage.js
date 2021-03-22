@@ -100,6 +100,8 @@ class HomePage extends Component {
       case 'delete':
         this.props.deleteFileRequest(props.id)
         break
+      default:
+        throw new Error('How did you even get here?')
     }
   }
 
