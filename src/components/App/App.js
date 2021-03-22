@@ -86,6 +86,25 @@ class App extends Component {
 
     this.state = initialState
     this.harmonyPanelRef = React.createRef()
+
+    const getQueryVariable = (variable) => {
+      var query = window.location.search.substring(1)
+      var vars = query.split('&')
+      for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split('=')
+        if (pair[0] == variable) {
+          return pair[1]
+        }
+      }
+      return false
+    }
+    let templateRequest = getQueryVariable('template')
+    if (
+      templateRequest.length > 0 &&
+      this.state.currentProject.activeFile === null
+    ) {
+      this.addTemplateFile(`${templateRequest}.hny`, `/${templateRequest}.hny`)
+    }
   }
 
   resetState = (callback) => {
@@ -129,60 +148,69 @@ class App extends Component {
     })
   }
 
+  addTemplateFile = (fileName, template) => {
+    var currentProject = this.state.currentProject
+    const app = this
+    try {
+      axios
+        .get(process.env.REACT_APP_HOMEPAGE + '/code' + template, {
+          validateStatus() {
+            return true
+          },
+        })
+        .then((response) => {
+          if (200 <= response.status && response.status < 300) {
+            const data = response.data
+            currentProject.files.push({
+              name: fileName,
+              text: data,
+              hasChanges: true,
+            })
+            currentProject.activeFile = fileName
+            this.setState({
+              currentProject: currentProject,
+            })
+            this.closeDialog('addFileDialog')
+          }
+        })
+        .catch((e) => {
+          //backup: hosting from IDE;
+          fetch(`${process.env.PUBLIC_URL}/templates/${template}`)
+            .then((t) => t.text())
+            .then((text) => {
+              currentProject.files.push({
+                name: fileName,
+                text,
+                hasChanges: true,
+              })
+              currentProject.activeFile = fileName
+              this.setState({
+                currentProject: currentProject,
+              })
+              this.closeDialog('addFileDialog')
+            })
+            .catch(() => {
+              app.openSnackbar(e.toString())
+              app.updateMessage(e.toString())
+            })
+        })
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   addFileToProject = (fileName, template) => {
     var currentProject = this.state.currentProject
     const app = this
     if (template === '') {
       currentProject.files.push({ name: fileName, text: '', hasChanges: true })
+      currentProject.activeFile = fileName
       this.setState({
         currentProject: currentProject,
       })
       this.closeDialog('addFileDialog')
     } else {
-      try {
-        axios
-          .get(process.env.REACT_APP_HOMEPAGE + 'code' + template, {
-            validateStatus() {
-              return true
-            },
-          })
-          .then((response) => {
-            if (200 <= response.status && response.status < 300) {
-              const data = response.data
-              currentProject.files.push({
-                name: fileName,
-                text: data,
-                hasChanges: true,
-              })
-              this.setState({
-                currentProject: currentProject,
-              })
-              this.closeDialog('addFileDialog')
-            }
-          })
-          .catch((e) => {
-            //backup: hosting from IDE;
-            fetch(`${process.env.PUBLIC_URL}/templates/${template}`)
-              .then((t) => t.text())
-              .then((text) => {
-                currentProject.files.push({
-                  name: fileName,
-                  text,
-                  hasChanges: true,
-                })
-                this.setState({
-                  currentProject: currentProject,
-                })
-                this.closeDialog('addFileDialog')
-              })
-              .catch(() => {
-                app.openSnackbar(e.toString())
-                app.updateMessage(e.toString())
-              })
-          })
-      } catch (err) {
-        console.log(err)
-      }
+      this.addTemplateFile(fileName, template)
     }
   }
 
