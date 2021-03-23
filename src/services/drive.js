@@ -1,4 +1,5 @@
 import { auth, firestore } from '../firebase'
+import _ from 'lodash'
 
 const drive = {}
 
@@ -132,6 +133,48 @@ drive.updateProject = (project) => {
   })
 }
 
+drive.updateProjectFile = (project, fileIndex) => {
+  return new Promise((resolve, reject) => {
+    const currentUser = auth.currentUser
+
+    if (!currentUser) {
+      reject(new Error('No current user'))
+
+      return
+    }
+
+    const uid = currentUser.uid
+
+    if (!uid) {
+      reject(new Error('No UID'))
+
+      return
+    }
+
+    const userReference = firestore.collection('users').doc(uid)
+    const userProjectsReference = userReference.collection('projects')
+    const userDocumentReference = userProjectsReference.doc(project.uid)
+
+    if (fileIndex >= drive.currentProject.files.length)
+      drive.currentProject.files.push(project.files[fileIndex])
+    else drive.currentProject.files[fileIndex] = project.files[fileIndex]
+    drive.currentProject.activeFile = project.files[fileIndex].name
+
+    userDocumentReference
+      .set(drive.currentProject)
+      .then((value) => {
+        userReference.update({
+          lastActiveProject: project.uid,
+        })
+
+        resolve(value)
+      })
+      .catch((reason) => {
+        reject(reason)
+      })
+  })
+}
+
 drive.retrieveProject = (projectId) => {
   return new Promise((resolve, reject) => {
     const currentUser = auth.currentUser
@@ -165,7 +208,7 @@ drive.retrieveProject = (projectId) => {
             lastActiveProject: project.uid,
           })
 
-          resolve(project)
+          resolve(_.cloneDeep(project))
         } else {
           reject(new Error(`No project named ${projectId}`))
 
