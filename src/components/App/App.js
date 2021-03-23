@@ -200,11 +200,11 @@ class App extends Component {
   }
 
   addFileToProject = (fileName, template) => {
-    var currentProject = Object.assign({}, this.state.currentProject)
+    var currentProject = this.state.currentProject
     const app = this
     if (currentProject.files.findIndex((e) => e.name === fileName) !== -1) {
       app.openSnackbar(
-        'Another file with the same name already exists in this project.'
+        'Another file with the same name already exists in this project'
       )
       return
     }
@@ -225,7 +225,7 @@ class App extends Component {
     const app = this
     if (currentProject.files.findIndex((e) => e.name === newFileName) !== -1) {
       app.openSnackbar(
-        'Another file with the same name already exists in this project.'
+        'Another file with the same name already exists in this project'
       )
       return
     }
