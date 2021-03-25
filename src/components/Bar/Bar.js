@@ -20,7 +20,11 @@ import {
   Link,
 } from '@material-ui/core'
 
-import { PlayArrow as RunIcon, Save as SaveIcon } from '@material-ui/icons'
+import {
+  PlayArrow as RunIcon,
+  Save as SaveIcon,
+  GetApp as DownloadIcon,
+} from '@material-ui/icons'
 
 import UserAvatar from '../UserAvatar'
 import { ReactComponent as HarmonyLogo } from '../../illustrations/ic_harmony.svg'
@@ -68,6 +72,7 @@ class Bar extends Component {
     const {
       onRunHarmony,
       onSaveProject,
+      onDownloadProject,
       onAboutClick,
       onSettingsClick,
       onSignOutClick,
@@ -126,6 +131,9 @@ class Bar extends Component {
               </Button>
               <Button>
                 <SaveIcon onClick={() => onSaveProject()} />
+              </Button>
+              <Button>
+                <DownloadIcon onClick={() => onDownloadProject()} />
               </Button>
             </ButtonGroup>
           </Box>

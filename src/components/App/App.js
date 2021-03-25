@@ -292,6 +292,24 @@ class App extends Component {
     }
   }
 
+  downloadCurrentProject = () => {
+    var zip = new JSZip()
+    var currentProject = this.state.currentProject
+    currentProject.files.forEach((element) => {
+      zip.file(element.name, element.text)
+    })
+    zip.generateAsync({ type: 'blob' }).then(function (blob) {
+      const a = document.createElement('a')
+      a.style.display = 'none'
+      document.body.appendChild(a)
+      a.href = window.URL.createObjectURL(blob)
+      a.setAttribute('download', 'files.zip')
+      a.click()
+      window.URL.revokeObjectURL(a.href)
+      document.body.removeChild(a)
+    })
+  }
+
   saveProjectFile = (fileIndex) => {
     if (this.state.user) {
       var currentProject = this.state.currentProject
@@ -618,6 +636,7 @@ class App extends Component {
                     roles={roles}
                     onRunHarmony={this.runHarmonyAnalysis}
                     onSaveProject={this.saveCurrentProject}
+                    onDownloadProject={this.downloadCurrentProject}
                     onSignUpClick={() => this.openDialog('signUpDialog')}
                     onSignInClick={() => this.openDialog('signInDialog')}
                     onAboutClick={() => this.openDialog('aboutDialog')}
