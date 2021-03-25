@@ -22,7 +22,8 @@ import axios from 'axios'
 import * as FormData from 'form-data'
 
 import parseCharmony from '../HarmonyPanel/charmony/CharmonyData'
-const HARMONY_SERVER_API = 'https://harmonylang.herokuapp.com/'
+const HARMONY_SERVER_API =
+  'http://ec2-3-142-239-249.us-east-2.compute.amazonaws.com:8080/'
 
 const initialState = {
   ready: false,
