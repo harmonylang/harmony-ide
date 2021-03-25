@@ -58,6 +58,9 @@ const styles = (theme) => ({
   drawerContainer: {
     overflow: 'auto',
   },
+  editorContainer: {
+    height: '100%',
+  },
   content: {
     flexGrow: 1,
     display: 'flex',
@@ -105,6 +108,20 @@ class HomePage extends Component {
     }
   }
 
+  handleKeyDown = (event) => {
+    const { project, saveProjectFile } = this.props
+    const key = event.key || event.keyCode
+    if (
+      (key === 's' || key === 'S' || key === 83) &&
+      (navigator.platform.match('Mac') ? event.metaKey : event.ctrlKey)
+    ) {
+      event.preventDefault()
+      saveProjectFile(
+        project.files.findIndex((e) => e.name === project.activeFile)
+      )
+    }
+  }
+
   render() {
     const {
       classes,
@@ -131,23 +148,26 @@ class HomePage extends Component {
           <div className={classes.drawerContainer}>
             <List>
               {project &&
-                project.files.map((text, index, arr) => (
-                  <ListItem
-                    button
-                    id={`${text.name}`}
-                    key={text.name}
-                    selected={text.name === project.activeFile}
-                    onClick={() => setFileActive(text.name)}
-                    onContextMenu={this.displayMenu}
-                  >
-                    <ListItemIcon>
-                      <FileIcon />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={text.name + (text.hasChanges ? '*' : '')}
-                    />
-                  </ListItem>
-                ))}
+                project.files
+                  .slice()
+                  .sort((a, b) => (a.name > b.name ? 1 : -1))
+                  .map((text, index, arr) => (
+                    <ListItem
+                      button
+                      id={`${text.name}`}
+                      key={text.name}
+                      selected={text.name === project.activeFile}
+                      onClick={() => setFileActive(text.name)}
+                      onContextMenu={this.displayMenu}
+                    >
+                      <ListItemIcon>
+                        <FileIcon />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={text.name + (text.hasChanges ? '*' : '')}
+                      />
+                    </ListItem>
+                  ))}
               <ListItem button key={'add-file'} onClick={addFileRequest}>
                 <ListItemIcon>
                   <AddIcon />
@@ -178,16 +198,22 @@ class HomePage extends Component {
               description="Sign in to access your files, or start a new one at the top left!"
             />
             {project.activeFile && (
-              <Editor
-                theme={theme.dark ? 'harmonyThemeDark' : 'harmonyThemeLight'}
-                defaultLanguage="harmony"
-                beforeMount={this.handleEditorHarmonyCustomLang.bind(this)}
-                path={project.activeFile}
-                defaultValue={
-                  project.files.find((e) => e.name === project.activeFile).text
-                }
-                onChange={handleEditorChange}
-              />
+              <div
+                className={classes.editorContainer}
+                onKeyDown={this.handleKeyDown}
+              >
+                <Editor
+                  theme={theme.dark ? 'harmonyThemeDark' : 'harmonyThemeLight'}
+                  defaultLanguage="harmony"
+                  beforeMount={this.handleEditorHarmonyCustomLang.bind(this)}
+                  path={project.activeFile}
+                  defaultValue={
+                    project.files.find((e) => e.name === project.activeFile)
+                      .text
+                  }
+                  onChange={handleEditorChange}
+                />
+              </div>
             )}
           </Box>
         </Box>

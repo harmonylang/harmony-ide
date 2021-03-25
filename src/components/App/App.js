@@ -202,6 +202,12 @@ class App extends Component {
   addFileToProject = (fileName, template) => {
     var currentProject = this.state.currentProject
     const app = this
+    if (currentProject.files.findIndex((e) => e.name === fileName) !== -1) {
+      app.openSnackbar(
+        'Another file with the same name already exists in this project'
+      )
+      return
+    }
     if (template === '') {
       currentProject.files.push({ name: fileName, text: '', hasChanges: true })
       currentProject.activeFile = fileName
@@ -216,6 +222,13 @@ class App extends Component {
 
   renameFileInProject = (fileName, newFileName) => {
     var currentProject = this.state.currentProject
+    const app = this
+    if (currentProject.files.findIndex((e) => e.name === newFileName) !== -1) {
+      app.openSnackbar(
+        'Another file with the same name already exists in this project'
+      )
+      return
+    }
     currentProject.files.forEach((element) => {
       if (element.name === fileName) {
         element.name = newFileName
@@ -272,6 +285,17 @@ class App extends Component {
         element.hasChanges = false
       })
       drive.updateProject(currentProject)
+      this.setState({ currentProject: currentProject })
+    } else {
+      this.setState({ signUpDialog: { open: true } })
+    }
+  }
+
+  saveProjectFile = (fileIndex) => {
+    if (this.state.user) {
+      var currentProject = this.state.currentProject
+      currentProject.files[fileIndex].hasChanges = false
+      drive.updateProjectFile(currentProject, fileIndex)
       this.setState({ currentProject: currentProject })
     } else {
       this.setState({ signUpDialog: { open: true } })
@@ -579,6 +603,7 @@ class App extends Component {
                 renameFileRequest={this.openRenameFileDialog}
                 deleteFileRequest={this.removeFileFromProject}
                 setFileActive={this.setFileAsActive}
+                saveProjectFile={this.saveProjectFile}
                 handleEditorChange={this.updateEditorValue}
                 harmonyPanelRef={this.harmonyPanelRef}
                 setHarmonyPanelWidth={this.setHarmonyPanelWidth}

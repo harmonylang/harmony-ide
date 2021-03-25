@@ -22,6 +22,7 @@ class Router extends Component {
       renameFileRequest,
       deleteFileRequest,
       setFileActive,
+      saveProjectFile,
       handleEditorChange,
       harmonyPanelRef,
       setHarmonyPanelWidth,
@@ -45,6 +46,7 @@ class Router extends Component {
               renameFileRequest={renameFileRequest}
               deleteFileRequest={deleteFileRequest}
               setFileActive={setFileActive}
+              saveProjectFile={saveProjectFile}
               handleEditorChange={handleEditorChange}
               harmonyPanelRef={harmonyPanelRef}
               setHarmonyPanelWidth={setHarmonyPanelWidth}
