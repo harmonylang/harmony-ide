@@ -108,6 +108,20 @@ class HomePage extends Component {
     }
   }
 
+  handleKeyDown = (event) => {
+    const { project, saveProjectFile } = this.props
+    const key = event.key || event.keyCode
+    if (
+      (key === 's' || key === 'S' || key === 83) &&
+      (navigator.platform.match('Mac') ? event.metaKey : event.ctrlKey)
+    ) {
+      event.preventDefault()
+      saveProjectFile(
+        project.files.findIndex((e) => e.name === project.activeFile)
+      )
+    }
+  }
+
   render() {
     const {
       classes,
@@ -115,7 +129,6 @@ class HomePage extends Component {
       project,
       addFileRequest,
       setFileActive,
-      saveProjectFile,
       handleEditorChange,
       harmonyPanelRef,
       setHarmonyPanelWidth,
@@ -187,22 +200,7 @@ class HomePage extends Component {
             {project.activeFile && (
               <div
                 className={classes.editorContainer}
-                onKeyDown={(event) => {
-                  const key = event.key || event.keyCode
-                  if (
-                    (key === 's' || key === 'S' || key === 83) &&
-                    (navigator.platform.match('Mac')
-                      ? event.metaKey
-                      : event.ctrlKey)
-                  ) {
-                    event.preventDefault()
-                    saveProjectFile(
-                      project.files.findIndex(
-                        (e) => e.name === project.activeFile
-                      )
-                    )
-                  }
-                }}
+                onKeyDown={this.handleKeyDown}
               >
                 <Editor
                   theme={theme.dark ? 'harmonyThemeDark' : 'harmonyThemeLight'}
