@@ -15,9 +15,12 @@ import {
   Button,
   IconButton,
   Divider,
+  FormControl,
+  InputAdornment,
   Menu,
   MenuItem,
   Link,
+  Select,
 } from '@material-ui/core'
 
 import {
@@ -66,13 +69,21 @@ class Bar extends Component {
 
   render() {
     // Properties
-    const { performingAction, user, userData, roles, classes } = this.props
+    const {
+      performingAction,
+      user,
+      userData,
+      server,
+      roles,
+      classes,
+    } = this.props
 
     // Events
     const {
       onRunHarmony,
       onSaveProject,
       onDownloadProject,
+      changeCompilationServer,
       onAboutClick,
       onSettingsClick,
       onSignOutClick,
@@ -119,6 +130,28 @@ class Bar extends Component {
                 {process.env.REACT_APP_TITLE}
               </Typography>
             </Box>
+          </Box>
+
+          <Box mr={2}>
+            <FormControl variant="outlined">
+              <Select
+                id="select-server"
+                style={{ height: '36px' }}
+                outlined="true"
+                value={server.currentServer}
+                onChange={changeCompilationServer}
+                startAdornment={
+                  <InputAdornment position="start">
+                    Server:&nbsp;
+                  </InputAdornment>
+                }
+              >
+                {server.serverList &&
+                  server.serverList.map((s) => {
+                    return <MenuItem value={s.name}>{s.name}</MenuItem>
+                  })}
+              </Select>
+            </FormControl>
           </Box>
 
           <Box mr={2}>

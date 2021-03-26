@@ -22,8 +22,17 @@ import axios from 'axios'
 import * as FormData from 'form-data'
 
 import parseCharmony from '../HarmonyPanel/charmony/CharmonyData'
-const HARMONY_SERVER_API =
-  'http://ec2-3-142-239-249.us-east-2.compute.amazonaws.com:8080/'
+const HARMONY_SERVER_API = {
+  currentServer: 'us-east-1',
+  serverList: [
+    { name: 'us-east-1', endpoint: 'https://harmonylang.herokuapp.com/' },
+    {
+      name: 'us-east-2',
+      endpoint:
+        'http://ec2-3-142-239-249.us-east-2.compute.amazonaws.com:8080/',
+    },
+  ],
+}
 
 const initialState = {
   ready: false,
@@ -34,8 +43,8 @@ const initialState = {
   currentProject: drive.currentProject,
   editorValue: '',
   analysisValue: {},
+  harmonyServer: HARMONY_SERVER_API,
   roles: [],
-
   aboutDialog: {
     open: false,
   },
@@ -145,6 +154,15 @@ class App extends Component {
       snackbar: {
         message: clearMessage ? '' : snackbar.message,
         open: false,
+      },
+    })
+  }
+
+  changeCompilationServer = (selected) => {
+    this.setState({
+      harmonyServer: {
+        currentServer: selected.target.value,
+        serverList: HARMONY_SERVER_API.serverList,
       },
     })
   }
@@ -366,6 +384,7 @@ class App extends Component {
     const app = this
     app.startLoading()
     app.setHarmonyPanelWidth(this.state.harmonyPanel.savedWidth, true)
+    console.log(this.state.harmonyServer)
     zip.generateAsync({ type: 'blob' }).then(function (blob) {
       const formData = new FormData()
       formData.append('file', blob, 'files.zip')
@@ -374,12 +393,18 @@ class App extends Component {
       formData.append('source', 'web-ide')
       try {
         axios
-          .post(HARMONY_SERVER_API + 'check', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-            validateStatus() {
-              return true
-            },
-          })
+          .post(
+            app.state.harmonyServer.serverList.find(
+              (e) => e.name === app.state.harmonyServer.currentServer
+            ).endpoint + 'check',
+            formData,
+            {
+              headers: { 'Content-Type': 'multipart/form-data' },
+              validateStatus() {
+                return true
+              },
+            }
+          )
           .then((response) => {
             if (200 <= response.status && response.status < 300) {
               const data = response.data
@@ -590,6 +615,7 @@ class App extends Component {
       userData,
       roles,
       currentProject,
+      harmonyServer,
     } = this.state
 
     const {
@@ -633,10 +659,12 @@ class App extends Component {
                     theme={theme}
                     user={user}
                     userData={userData}
+                    server={harmonyServer}
                     roles={roles}
                     onRunHarmony={this.runHarmonyAnalysis}
                     onSaveProject={this.saveCurrentProject}
                     onDownloadProject={this.downloadCurrentProject}
+                    changeCompilationServer={this.changeCompilationServer}
                     onSignUpClick={() => this.openDialog('signUpDialog')}
                     onSignInClick={() => this.openDialog('signInDialog')}
                     onAboutClick={() => this.openDialog('aboutDialog')}
