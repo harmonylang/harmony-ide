@@ -159,14 +159,14 @@ class Bar extends Component {
               color="default"
               aria-label="outlined secondary button group"
             >
-              <Button>
-                <RunIcon onClick={() => onRunHarmony()} />
+              <Button onClick={() => onRunHarmony()}>
+                <RunIcon />
               </Button>
-              <Button>
-                <SaveIcon onClick={() => onSaveProject()} />
+              <Button onClick={() => onSaveProject()}>
+                <SaveIcon />
               </Button>
-              <Button>
-                <DownloadIcon onClick={() => onDownloadProject()} />
+              <Button onClick={() => onDownloadProject()}>
+                <DownloadIcon />
               </Button>
             </ButtonGroup>
           </Box>

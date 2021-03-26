@@ -342,9 +342,7 @@ class App extends Component {
   }
 
   startLoading = () => {
-    if (this.state.harmonyPanel.width !== 0) {
-      this.harmonyPanelRef.current.contentWindow.location.reload()
-    }
+    this.harmonyPanelRef.current.contentWindow.location.reload()
     setTimeout(() => {
       this.harmonyPanelRef.current.contentWindow.postMessage({
         command: 'start',
