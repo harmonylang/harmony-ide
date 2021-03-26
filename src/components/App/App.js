@@ -25,11 +25,13 @@ import parseCharmony from '../HarmonyPanel/charmony/CharmonyData'
 const HARMONY_SERVER_API = {
   currentServer: 'us-east-1',
   serverList: [
-    { name: 'us-east-1', endpoint: 'https://harmonylang.herokuapp.com/' },
+    {
+      name: 'us-east-1',
+      endpoint: 'https://www.harmonylang.dev/',
+    },
     {
       name: 'us-east-2',
-      endpoint:
-        'http://ec2-3-142-239-249.us-east-2.compute.amazonaws.com:8080/',
+      endpoint: 'https://harmonylang.herokuapp.com/',
     },
   ],
 }
