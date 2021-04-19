@@ -34,8 +34,12 @@ export function parseIntermediateValueRep(
       }
       return dict
     }
+    case 'context': {
+      return v;
+    }
   }
-  throw TypeError('Cannot parse this value')
+  console.log('Cannot parse this value')
+  return JSON.stringify(v);
 }
 
 export function parseVariableSet(
