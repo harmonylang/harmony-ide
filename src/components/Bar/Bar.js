@@ -81,8 +81,6 @@ class Bar extends Component {
     // Events
     const {
       onRunHarmony,
-      onSaveProject,
-      onDownloadProject,
       changeCompilationServer,
       onAboutClick,
       onSettingsClick,
@@ -161,12 +159,6 @@ class Bar extends Component {
             >
               <Button onClick={() => onRunHarmony()}>
                 <RunIcon />
-              </Button>
-              <Button onClick={() => onSaveProject()}>
-                <SaveIcon />
-              </Button>
-              <Button onClick={() => onDownloadProject()}>
-                <DownloadIcon />
               </Button>
             </ButtonGroup>
           </Box>

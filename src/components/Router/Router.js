@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 
 import { BrowserRouter, Switch, Redirect, Route } from 'react-router-dom'
 
-import HomePage from '../HomePage'
 import AdminPage from '../AdminPage'
 import UserPage from '../UserPage'
 import NotFoundPage from '../NotFoundPage'
@@ -12,25 +11,7 @@ import NotFoundPage from '../NotFoundPage'
 class Router extends Component {
   render() {
     // Properties
-    const {
-      user,
-      roles,
-      theme,
-      project,
-      bar,
-      addFileRequest,
-      renameFileRequest,
-      deleteFileRequest,
-      setFileActive,
-      saveProjectFile,
-      handleEditorChange,
-      harmonyPanelRef,
-      setHarmonyPanelWidth,
-      harmonyPanelState,
-    } = this.props
-
-    // Functions
-    const { openSnackbar } = this.props
+    const { user, roles, bar, projectPage } = this.props
 
     return (
       <BrowserRouter basename={process.env.REACT_APP_BASENAME}>
@@ -38,21 +19,7 @@ class Router extends Component {
 
         <Switch>
           <Route path="/" exact>
-            <HomePage
-              user={user}
-              theme={theme}
-              project={project}
-              addFileRequest={addFileRequest}
-              renameFileRequest={renameFileRequest}
-              deleteFileRequest={deleteFileRequest}
-              setFileActive={setFileActive}
-              saveProjectFile={saveProjectFile}
-              handleEditorChange={handleEditorChange}
-              harmonyPanelRef={harmonyPanelRef}
-              setHarmonyPanelWidth={setHarmonyPanelWidth}
-              harmonyPanelState={harmonyPanelState}
-              openSnackbar={openSnackbar}
-            />
+            {projectPage}
           </Route>
 
           <Route path="/admin">

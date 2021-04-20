@@ -20,8 +20,16 @@ import {
   ListItemText,
   ListItemIcon,
   Toolbar,
+  Typography,
+  IconButton,
 } from '@material-ui/core'
-import { Description as FileIcon, Add as AddIcon } from '@material-ui/icons'
+import {
+  Description as FileIcon,
+  Add as AddIcon,
+  Save as SaveIcon,
+  GetApp as DownloadIcon,
+  Settings as SettingsIcon,
+} from '@material-ui/icons'
 
 import {
   Menu,
@@ -57,6 +65,23 @@ const styles = (theme) => ({
   },
   drawerContainer: {
     overflow: 'auto',
+  },
+  drawerFooter: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    width: '100%',
+    height: '5em',
+    borderWidth: 0,
+    borderTopWidth: 2,
+    borderColor: '#646464',
+    borderStyle: 'solid',
+  },
+  drawerButton: {
+    padding: '0.2em',
+    marginTop: '0em',
+    marginLeft: '0em',
+    float: 'right',
   },
   editorContainer: {
     height: '100%',
@@ -129,6 +154,9 @@ class HomePage extends Component {
       project,
       addFileRequest,
       setFileActive,
+      saveCurrentProject,
+      downloadCurrentProject,
+      openProjectSettings,
       handleEditorChange,
       harmonyPanelRef,
       setHarmonyPanelWidth,
@@ -175,6 +203,29 @@ class HomePage extends Component {
                 <ListItemText primary={'Add File'} />
               </ListItem>
             </List>
+            <Box className={classes.drawerFooter} p={1} pl={1.5}>
+              <Typography variant="body1" display="block">
+                {project.name}
+              </Typography>
+              <IconButton
+                className={classes.drawerButton}
+                onClick={openProjectSettings}
+              >
+                <SettingsIcon fontSize="small" />
+              </IconButton>
+              <IconButton
+                className={classes.drawerButton}
+                onClick={downloadCurrentProject}
+              >
+                <DownloadIcon fontSize="small" />
+              </IconButton>
+              <IconButton
+                className={classes.drawerButton}
+                onClick={saveCurrentProject}
+              >
+                <SaveIcon fontSize="small" />
+              </IconButton>
+            </Box>
           </div>
           <Menu
             id={MENU_ID}

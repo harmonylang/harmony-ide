@@ -11,6 +11,7 @@ import SettingsDialog from '../SettingsDialog'
 import DeleteAccountDialog from '../DeleteAccountDialog'
 import AlertDialog from '../AlertDialog'
 import AddFileDialog from '../AddFileDialog'
+import ProjectSettingsDialog from '../ProjectSettingsDialog'
 
 class DialogHost extends Component {
   render() {
@@ -22,6 +23,7 @@ class DialogHost extends Component {
 
     const aboutDialog = dialogs.aboutDialog
     const addFileDialog = dialogs.addFileDialog
+    const projectSettingsDialog = dialogs.projectSettingsDialog
     const signUpDialog = dialogs.signUpDialog
     const signInDialog = dialogs.signInDialog
     const settingsDialog = dialogs.settingsDialog
@@ -48,6 +50,14 @@ class DialogHost extends Component {
           acceptButtonText={addFileDialog.acceptButtonText}
           handleClose={addFileDialog.handleClose}
           handleAddFile={addFileDialog.handleAddFile}
+          {...addFileDialog.props}
+        />
+
+        <ProjectSettingsDialog
+          dialogProps={projectSettingsDialog.dialogProps}
+          project={projectSettingsDialog.project}
+          handleClose={projectSettingsDialog.handleClose}
+          handleSave={projectSettingsDialog.handleSave}
           {...addFileDialog.props}
         />
 

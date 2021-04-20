@@ -11,6 +11,7 @@ import authentication from '../../services/authentication'
 import appearance from '../../services/appearance'
 import drive from '../../services/drive'
 
+import HomePage from '../HomePage'
 import ErrorBoundary from '../ErrorBoundary'
 import LaunchScreen from '../LaunchScreen'
 import Bar from '../Bar'
@@ -23,14 +24,14 @@ import * as FormData from 'form-data'
 
 import parseCharmony from '../HarmonyPanel/charmony/CharmonyData'
 const HARMONY_SERVER_API = {
-  currentServer: 'us-east-1',
+  currentServer: 'main',
   serverList: [
     {
-      name: 'us-east-1',
+      name: 'main',
       endpoint: 'https://www.harmonylang.dev/',
     },
     {
-      name: 'us-east-2',
+      name: 'legacy',
       endpoint: 'https://harmonylang.herokuapp.com/',
     },
   ],
@@ -65,6 +66,10 @@ const initialState = {
     acceptButtonText: '',
     acceptFunction: () => {},
     newFile: true,
+    open: false,
+  },
+
+  projectSettingsDialog: {
     open: false,
   },
 
@@ -388,9 +393,16 @@ class App extends Component {
     zip.generateAsync({ type: 'blob' }).then(function (blob) {
       const formData = new FormData()
       formData.append('file', blob, 'files.zip')
-      formData.append('main', `["${currentProject.activeFile}"]`)
+      if (currentProject.settings.alwaysEntry) {
+        formData.append('main', `["${currentProject.entryFile}"]`)
+      } else {
+        formData.append('main', `["${currentProject.activeFile}"]`)
+      }
       formData.append('version', process.env.REACT_APP_VERSION)
       formData.append('source', 'web-ide')
+      if (currentProject.settings.compilerOptions) {
+        formData.append('options', currentProject.settings.compilerOptions)
+      }
       try {
         axios
           .post(
@@ -518,6 +530,10 @@ class App extends Component {
           open: false,
         },
 
+        projectSettingsDialog: {
+          open: false,
+        },
+
         signUpDialog: {
           open: false,
         },
@@ -621,6 +637,7 @@ class App extends Component {
     const {
       aboutDialog,
       addFileDialog,
+      projectSettingsDialog,
       signUpDialog,
       signInDialog,
       settingsDialog,
@@ -642,17 +659,28 @@ class App extends Component {
               <Router
                 user={user}
                 roles={roles}
-                theme={theme}
-                project={currentProject}
-                addFileRequest={this.openAddFileDialog}
-                renameFileRequest={this.openRenameFileDialog}
-                deleteFileRequest={this.removeFileFromProject}
-                setFileActive={this.setFileAsActive}
-                saveProjectFile={this.saveProjectFile}
-                handleEditorChange={this.updateEditorValue}
-                harmonyPanelRef={this.harmonyPanelRef}
-                setHarmonyPanelWidth={this.setHarmonyPanelWidth}
-                harmonyPanelState={this.state.harmonyPanel}
+                projectPage={
+                  <HomePage
+                    user={user}
+                    theme={theme}
+                    project={currentProject}
+                    addFileRequest={this.openAddFileDialog}
+                    renameFileRequest={this.openRenameFileDialog}
+                    deleteFileRequest={this.removeFileFromProject}
+                    setFileActive={this.setFileAsActive}
+                    saveProjectFile={this.saveProjectFile}
+                    saveCurrentProject={this.saveCurrentProject}
+                    downloadCurrentProject={this.downloadCurrentProject}
+                    openProjectSettings={() =>
+                      this.openDialog('projectSettingsDialog')
+                    }
+                    handleEditorChange={this.updateEditorValue}
+                    harmonyPanelRef={this.harmonyPanelRef}
+                    setHarmonyPanelWidth={this.setHarmonyPanelWidth}
+                    harmonyPanelState={this.state.harmonyPanel}
+                    openSnackbar={this.openSnackbar}
+                  />
+                }
                 bar={
                   <Bar
                     performingAction={performingAction}
@@ -662,8 +690,6 @@ class App extends Component {
                     server={harmonyServer}
                     roles={roles}
                     onRunHarmony={this.runHarmonyAnalysis}
-                    onSaveProject={this.saveCurrentProject}
-                    onDownloadProject={this.downloadCurrentProject}
                     changeCompilationServer={this.changeCompilationServer}
                     onSignUpClick={() => this.openDialog('signUpDialog')}
                     onSignInClick={() => this.openDialog('signInDialog')}
@@ -700,6 +726,20 @@ class App extends Component {
                     acceptButtonText: addFileDialog.acceptButtonText,
                     handleClose: () => this.closeDialog('addFileDialog'),
                     handleAddFile: addFileDialog.acceptFunction,
+                  },
+
+                  projectSettingsDialog: {
+                    dialogProps: {
+                      open: projectSettingsDialog.open,
+                      onClose: () => this.closeDialog('projectSettingsDialog'),
+                    },
+                    project: currentProject,
+                    handleClose: () =>
+                      this.closeDialog('projectSettingsDialog'),
+                    handleSave: (p) => {
+                      this.closeDialog('projectSettingsDialog')
+                      this.setState({ currentProject: p })
+                    },
                   },
 
                   signUpDialog: {
