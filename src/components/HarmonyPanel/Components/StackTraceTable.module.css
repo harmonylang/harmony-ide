@@ -1,0 +1,57 @@
+.stackTraceTable {
+  width: 100%;
+  position: relative;
+  overflow-x: scroll;
+  display: block;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.stackTraceTable tbody {
+  display: block;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.stackTraceTable td {
+  padding: 10px 0;
+}
+
+.stackTraceTable td div {
+  padding: 3px 0;
+}
+
+.stackTraceTable th,
+.stackTraceTable td {
+  border-bottom: 1px solid white;
+}
+
+.stackTraceTable thead,
+.stackTraceTable tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed; /* even columns width , fix width of table too*/
+}
+
+.stackTraceTable thead {
+  /*width: calc( 100% - 1em );*/
+  /* scrollbar is average 1em/16px width, remove it from thead width */
+}
+.stackTraceTable table {
+  overflow-x: hidden;
+  background-color: #1f1f1f;
+  width: 100%;
+  color: white;
+}
+
+.processColumn {
+  width: 15%;
+}
+.statusColumn {
+  width: 20%;
+}
+.stackTraceColumn {
+  width: 30%;
+}
+.variablesColumn {
+  width: 35%;
+}

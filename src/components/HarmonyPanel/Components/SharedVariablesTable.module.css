@@ -1,3 +1,7 @@
+.sharedVariableTable {
+  background-color: #1f1f1f;
+}
+
 .sharedVariableTable details > summary {
   font-family: 'Courier New', Courier, monospace;
   color: white;

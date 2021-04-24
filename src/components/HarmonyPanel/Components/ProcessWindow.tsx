@@ -1,5 +1,5 @@
 import { CharmonyMacroStep, CharmonyTopLevel } from '../charmony/CharmonyData'
-import React, { createRef, useEffect, useState } from 'react'
+import React, { createRef, useEffect } from 'react'
 
 const COLOR_MAP = [
   '#c62828',
@@ -42,40 +42,16 @@ type ProcessElement = {
   macroStep: CharmonyMacroStep
 }
 
-function organizeMacroSteps(
-  macroSteps: CharmonyMacroStep[]
-): {
-  tids: string[]
-  processes: ProcessElement[]
-  totalDuration: number
-} {
-  let time = 0
-  const tidsSet = new Set<string>()
-  const tids: string[] = []
-  const processes = macroSteps.map((mas) => {
-    tidsSet.add(mas.tid)
-    const e = { macroStep: mas, timeStart: time }
-    time += mas.duration
-    return e
-  })
-  tidsSet.forEach((v) => tids.push(v))
-  return { processes, tids, totalDuration: time }
-}
-
 function ProcessBar(props: {
   tid: string
   color: string
   processes: ProcessElement[]
   onClick(p: ProcessElement): void
 }) {
-  const processBarHeight = 30
+  // const processBarHeight = 30
   let time = 0
   return (
-    <div
-      style={{
-        boxSizing: 'border-box',
-      }}
-    >
+    <div style={{ boxSizing: 'border-box', height: '100%' }}>
       {props.processes
         .filter((x) => x.macroStep.tid === props.tid)
         .map((p) => {
@@ -87,7 +63,7 @@ function ProcessBar(props: {
               onClick={() => props.onClick(p)}
               style={{
                 width: width,
-                height: processBarHeight,
+                height: '100%',
                 boxSizing: 'border-box',
                 border: `1px solid rgba(255, 255, 255, 0.2)`,
                 borderRadius: 3,
@@ -121,30 +97,21 @@ function timeFormatToHH_MM_SS(t: number): string {
   return hours + ':' + minutes + ':' + seconds
 }
 
-export default function ProcessTable(props: { toplevel: CharmonyTopLevel }) {
-  const [currentTime, setCurrentTime] = useState(0)
-  const [isPlaying, setIsPlaying] = useState(false)
+export default function ProcessWindow(props: {
+  toplevel: CharmonyTopLevel
+  currentTime: number
+  totalDuration: number
+  playbackRate: number
+  togglePlaybackRate(): void
+  processes: ProcessElement[]
+  onTimeChange(time: number): void
+  onPlayStatus(status: 'play' | 'pause'): void
+  playStatus: 'play' | 'pause'
+}) {
+  const tids = Object.keys(props.toplevel.idToThreadName)
+
   const playerBar = createRef<HTMLDivElement>()
-  const { processes, tids, totalDuration } = organizeMacroSteps(
-    props.toplevel.macroSteps
-  )
-
-  useEffect(() => {
-    if (isPlaying) {
-      const interval = setInterval(() => {
-        if (currentTime + 1 >= totalDuration) {
-          clearInterval(interval)
-          setIsPlaying(false)
-        }
-        setCurrentTime(currentTime + 1)
-      }, 100)
-      return () => clearInterval(interval)
-    }
-  }, [currentTime, isPlaying, totalDuration])
-
-  useEffect(() => {
-    playerBar.current?.scrollIntoView()
-  }, [playerBar])
+  const playerWindow = createRef<HTMLDivElement>()
 
   const windowWidth = window.innerWidth
   let sliderWidth = windowWidth - 140
@@ -153,7 +120,7 @@ export default function ProcessTable(props: { toplevel: CharmonyTopLevel }) {
     <div style={{ backgroundColor: '#1F1F1F', color: 'white' }}>
       <div style={{ backgroundColor: '#3C3C3C' }}>
         <div style={{ display: 'inline-block' }}>
-          <div style={{ display: 'flex', width: 140 }}>
+          <div style={{ display: 'flex', width: 200 }}>
             <div
               style={{
                 flex: 1,
@@ -163,11 +130,18 @@ export default function ProcessTable(props: { toplevel: CharmonyTopLevel }) {
                 backgroundColor: '#252525',
                 textAlign: 'center',
               }}
+              onClick={() =>
+                props.onTimeChange(Math.max(props.currentTime - 1, 0))
+              }
             >
               {'<'}
             </div>
             <div
-              onClick={() => setIsPlaying(!isPlaying)}
+              onClick={() =>
+                props.onPlayStatus(
+                  props.playStatus === 'play' ? 'pause' : 'play'
+                )
+              }
               style={{
                 flex: 1,
                 margin: 6,
@@ -177,7 +151,7 @@ export default function ProcessTable(props: { toplevel: CharmonyTopLevel }) {
                 textAlign: 'center',
               }}
             >
-              {isPlaying ? '⏸' : '▶️'}
+              {props.playStatus === 'play' ? '⏸' : '▶️'}
             </div>
             <div
               style={{
@@ -188,23 +162,56 @@ export default function ProcessTable(props: { toplevel: CharmonyTopLevel }) {
                 backgroundColor: '#252525',
                 textAlign: 'center',
               }}
+              onClick={() =>
+                props.onTimeChange(
+                  Math.min(props.currentTime + 1, props.totalDuration)
+                )
+              }
             >
               {'>'}
             </div>
+            <div
+              style={{
+                flex: 1,
+                margin: 6,
+                padding: '3px 0',
+                cursor: 'pointer',
+                backgroundColor: '#252525',
+                textAlign: 'center',
+              }}
+              onClick={props.togglePlaybackRate}
+            >
+              {props.playbackRate.toFixed(1)}x
+            </div>
           </div>
         </div>
-        <div style={{ display: 'inline-block', width: sliderWidth }}>
-          <span style={{ width: 100 }}>
-            {timeFormatToHH_MM_SS(currentTime)}
-          </span>
-          <input
-            type="range"
-            style={{ maxWidth: 500, width: sliderWidth / 2, margin: '0 1rem' }}
-            value={currentTime}
-            max={totalDuration}
-            onChange={(e) => setCurrentTime(Number.parseInt(e.target.value))}
-          />
-          <span>{timeFormatToHH_MM_SS(totalDuration)}</span>
+        <div
+          style={{
+            display: 'inline-block',
+            maxWidth: sliderWidth,
+            verticalAlign: 'middle',
+          }}
+        >
+          <div style={{ float: 'left', width: 100, textAlign: 'center' }}>
+            {timeFormatToHH_MM_SS(props.currentTime)}
+          </div>
+          <div style={{ float: 'left' }}>
+            <input
+              type="range"
+              style={{ margin: '0 1rem' }}
+              value={props.currentTime}
+              max={props.totalDuration}
+              onChange={(e) => {
+                if (playerWindow.current != null && playerBar.current != null) {
+                  playerWindow.current.scrollLeft = playerBar.current.offsetLeft
+                }
+                props.onTimeChange(Number.parseInt(e.target.value))
+              }}
+            />
+          </div>
+          <div style={{ float: 'left', width: 100, textAlign: 'center' }}>
+            {timeFormatToHH_MM_SS(props.totalDuration)}
+          </div>
         </div>
       </div>
 
@@ -226,7 +233,18 @@ export default function ProcessTable(props: { toplevel: CharmonyTopLevel }) {
           }}
         >
           {tids.map((tid) => {
-            return <div style={{ height: 30, paddingLeft: '10%' }}>P{tid}</div>
+            return (
+              <div
+                style={{
+                  height: 30,
+                  paddingLeft: '10%',
+                  boxSizing: 'border-box',
+                  borderBottom: '1px solid #3C3C3C',
+                }}
+              >
+                P{tid}
+              </div>
+            )
           })}
         </div>
         <div
@@ -241,6 +259,7 @@ export default function ProcessTable(props: { toplevel: CharmonyTopLevel }) {
             borderLeft: '1px solid green',
             overflowY: 'hidden',
           }}
+          ref={playerWindow}
         >
           <div
             style={{
@@ -249,20 +268,26 @@ export default function ProcessTable(props: { toplevel: CharmonyTopLevel }) {
               height: '100%',
               backgroundColor: 'white',
               width: 4,
-              left: currentTime,
+              left: props.currentTime,
             }}
             ref={playerBar}
           />
           <div style={{ position: 'absolute', zIndex: 0, top: 0 }}>
             {tids.map((tid, idx) => {
               return (
-                <div style={{ height: 30 }}>
+                <div
+                  style={{
+                    height: 30,
+                    boxSizing: 'border-box',
+                    borderBottom: '1px solid #3C3C3C',
+                  }}
+                >
                   <ProcessBar
                     tid={tid}
-                    processes={processes}
+                    processes={props.processes}
                     color={COLOR_MAP[idx & COLOR_MAP.length]}
                     onClick={(p) => {
-                      setCurrentTime(p.timeStart)
+                      props.onTimeChange(p.timeStart)
                     }}
                   />
                 </div>

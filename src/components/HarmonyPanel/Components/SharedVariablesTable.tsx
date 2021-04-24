@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactTooltip from 'react-tooltip'
 import styles from './SharedVariablesTable.module.css'
+import DropDownPane from './DropDownPane'
 
 /**
  * Creates an html-tag string which is customized for colors based on
@@ -60,28 +61,15 @@ function ObjectCollapseable(props: {
 
 export default function SharedVariablesTable(props: {
   values: Record<string, unknown>
+  height?: number
 }) {
   return (
-    <div
-      style={{ backgroundColor: '#1F1F1F' }}
+    <DropDownPane
+      header={'Shared Variables'}
+      height={props.height}
       className={styles.sharedVariableTable}
     >
-      <div style={{ backgroundColor: '#3C3C3C', color: 'white' }}>
-        Shared Variables
-      </div>
-      <div
-        style={{
-          backgroundColor: '#1F1F1F',
-          width: '100%',
-          fontFamily: 'monospace',
-          color: 'white',
-        }}
-      >
-        <ObjectCollapseable
-          summary={'Shared Variables'}
-          object={props.values}
-        />
-      </div>
-    </div>
+      <ObjectCollapseable summary={'Shared Variables'} object={props.values} />
+    </DropDownPane>
   )
 }
