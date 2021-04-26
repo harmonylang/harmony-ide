@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useHistory, Link } from 'react-router-dom'
 
 import { 
   Grid, 
@@ -73,6 +73,7 @@ function UserPage(props) {
   const [deleteSelection, setDeleteSelection] = useState(null)
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const { userId } = useParams()
+  const history = useHistory()
   const classes = useStyles()
 
   useEffect(() => {
@@ -159,7 +160,7 @@ function UserPage(props) {
   const deleteProject = (project) => {
     if (user) {
       var projectRemoved = projects.filter(function(value, index, arr){ 
-        return value.uid !== project.uid;
+        return value.uid != project.uid;
       });
       props.drive.deleteProject(project.uid, ((projectRemoved.length > 0) ? projectRemoved[0].uid : ""))
       
@@ -187,7 +188,8 @@ function UserPage(props) {
               <IconButton
                 className={classes.projectButton}
                 onClick={() => {
-                  window.location.pathname = `/project/${project.uid}`
+                  history.push(`/project/${project.uid}`)
+                  history.go(0)
                 }}
               >
                 <PlayIcon fontSize="small" />
@@ -214,7 +216,8 @@ function UserPage(props) {
       <Fab className={classes.fab} color="primary" aria-label="add" onClick={() => {
         var newProject = props.drive.createProject()
         props.drive.updateProject(newProject).then(() => {
-          window.location.pathname = `/project/${newProject.uid}`
+          history.push(`/project/${newProject.uid}`)
+          history.go(0)
         })
       }}>
         <AddIcon />
@@ -246,6 +249,7 @@ function UserPage(props) {
         </Dialog>
       )}
     </Box>
+    
   )
 }
 
