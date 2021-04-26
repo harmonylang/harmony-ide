@@ -1,6 +1,6 @@
 {
   "name": "harmony-ide",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "private": true,
   "homepage": "https://harmony.cs.cornell.edu/ide",
   "dependencies": {
