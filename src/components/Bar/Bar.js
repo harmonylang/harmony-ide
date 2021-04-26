@@ -24,9 +24,7 @@ import {
 } from '@material-ui/core'
 
 import {
-  PlayArrow as RunIcon,
-  Save as SaveIcon,
-  GetApp as DownloadIcon,
+  PlayArrow as RunIcon
 } from '@material-ui/icons'
 
 import UserAvatar from '../UserAvatar'
@@ -97,7 +95,7 @@ class Bar extends Component {
         onClick: onAboutClick,
       },
       {
-        name: 'Profile',
+        name: 'Projects',
         to: user ? `/user/${user.uid}` : null,
       },
       {
@@ -146,7 +144,7 @@ class Bar extends Component {
               >
                 {server.serverList &&
                   server.serverList.map((s) => {
-                    return <MenuItem value={s.name}>{s.name}</MenuItem>
+                    return <MenuItem value={s.name} key={s.name}>{s.name}</MenuItem>
                   })}
               </Select>
             </FormControl>

@@ -117,9 +117,10 @@ drive.updateProject = (project) => {
     const userDocumentReference = userProjectsReference.doc(project.uid)
 
     drive.currentProject = project
+    drive.currentProject.lastUpdated = Date.now()
 
     userDocumentReference
-      .set(project)
+      .set(drive.currentProject)
       .then((value) => {
         userReference.update({
           lastActiveProject: project.uid,
@@ -159,6 +160,7 @@ drive.updateProjectFile = (project, fileIndex) => {
       drive.currentProject.files.push(project.files[fileIndex])
     else drive.currentProject.files[fileIndex] = project.files[fileIndex]
     drive.currentProject.activeFile = project.files[fileIndex].name
+    drive.currentProject.lastUpdated = Date.now()
 
     userDocumentReference
       .set(drive.currentProject)
@@ -214,6 +216,43 @@ drive.retrieveProject = (projectId) => {
 
           return
         }
+      })
+      .catch((reason) => {
+        reject(reason)
+      })
+  })
+}
+
+drive.deleteProject = (projectId, newLastActive) => {
+  return new Promise((resolve, reject) => {
+    const currentUser = auth.currentUser
+
+    if (!currentUser) {
+      reject(new Error('No current user'))
+
+      return
+    }
+
+    const uid = currentUser.uid
+
+    if (!uid) {
+      reject(new Error('No UID'))
+
+      return
+    }
+
+    const userReference = firestore.collection('users').doc(uid)
+    const userProjectsReference = userReference.collection('projects')
+    const userDocumentReference = userProjectsReference.doc(projectId)
+
+    userDocumentReference
+      .delete()
+      .then(() => {
+          userReference.update({
+            lastActiveProject: newLastActive,
+          })
+
+          resolve()
       })
       .catch((reason) => {
         reject(reason)

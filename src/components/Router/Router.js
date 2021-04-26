@@ -5,13 +5,12 @@ import PropTypes from 'prop-types'
 import { BrowserRouter, Switch, Redirect, Route } from 'react-router-dom'
 
 import AdminPage from '../AdminPage'
-import UserPage from '../UserPage'
 import NotFoundPage from '../NotFoundPage'
 
 class Router extends Component {
   render() {
     // Properties
-    const { user, roles, bar, projectPage } = this.props
+    const { user, roles, bar, projectPage, userPage } = this.props
 
     return (
       <BrowserRouter basename={process.env.REACT_APP_BASENAME}>
@@ -19,6 +18,10 @@ class Router extends Component {
 
         <Switch>
           <Route path="/" exact>
+            {projectPage}
+          </Route>
+
+          <Route path="/project/:projectId" exact>
             {projectPage}
           </Route>
 
@@ -31,7 +34,7 @@ class Router extends Component {
           </Route>
 
           <Route path="/user/:userId">
-            {user ? <UserPage /> : <Redirect to="/" />}
+            {user ? userPage : <Redirect to="/" />}
           </Route>
 
           <Route>
@@ -47,7 +50,6 @@ Router.propTypes = {
   // Properties
   user: PropTypes.object,
   roles: PropTypes.array.isRequired,
-  theme: PropTypes.object.isRequired,
   bar: PropTypes.element,
 
   // Functions

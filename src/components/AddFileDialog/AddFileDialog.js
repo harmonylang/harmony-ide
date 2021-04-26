@@ -72,7 +72,7 @@ class AddFileDialog extends Component {
                   <em>None</em>
                 </MenuItem>
                 {templates.map((t) => (
-                  <MenuItem value={t.path}>{t.name}</MenuItem>
+                  <MenuItem value={t.path} key={t.path}>{t.name}</MenuItem>
                 ))}
               </Select>
             </FormControl>

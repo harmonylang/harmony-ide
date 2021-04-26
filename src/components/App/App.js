@@ -12,6 +12,7 @@ import appearance from '../../services/appearance'
 import drive from '../../services/drive'
 
 import HomePage from '../HomePage'
+import UserPage from '../UserPage'
 import ErrorBoundary from '../ErrorBoundary'
 import LaunchScreen from '../LaunchScreen'
 import Bar from '../Bar'
@@ -109,7 +110,7 @@ class App extends Component {
       var vars = query.split('&')
       for (var i = 0; i < vars.length; i++) {
         var pair = vars[i].split('=')
-        if (pair[0] == variable) {
+        if (pair[0] === variable) {
           return pair[1]
         }
       }
@@ -304,9 +305,23 @@ class App extends Component {
     this.setState({ currentProject: currentProject })
   }
 
-  saveCurrentProject = () => {
+  newProject = () => {
+    var newProject = drive.createProject()
+    drive.updateProject(newProject)
+    this.setState({ currentProject: newProject, ready: true })
+  }
+
+  openProject = (project) => {
     if (this.state.user) {
-      var currentProject = this.state.currentProject
+      this.setState({ currentProject: project })
+    }
+  }
+
+  saveProject = (currentProject) => {
+    if (currentProject === undefined){
+      currentProject = this.state.currentProject
+    }
+    if (this.state.user) {
       currentProject.files.forEach((element) => {
         element.hasChanges = false
       })
@@ -317,9 +332,11 @@ class App extends Component {
     }
   }
 
-  downloadCurrentProject = () => {
+  downloadProject = (currentProject) => {
+    if (currentProject === undefined){
+      currentProject = this.state.currentProject
+    }
     var zip = new JSZip()
-    var currentProject = this.state.currentProject
     currentProject.files.forEach((element) => {
       zip.file(element.name, element.text)
     })
@@ -338,6 +355,7 @@ class App extends Component {
   saveProjectFile = (fileIndex) => {
     if (this.state.user) {
       var currentProject = this.state.currentProject
+      console.log(currentProject);
       currentProject.files[fileIndex].hasChanges = false
       drive.updateProjectFile(currentProject, fileIndex)
       this.setState({ currentProject: currentProject })
@@ -389,7 +407,6 @@ class App extends Component {
     const app = this
     app.startLoading()
     app.setHarmonyPanelWidth(this.state.harmonyPanel.savedWidth, true)
-    console.log(this.state.harmonyServer)
     zip.generateAsync({ type: 'blob' }).then(function (blob) {
       const formData = new FormData()
       formData.append('file', blob, 'files.zip')
@@ -669,8 +686,8 @@ class App extends Component {
                     deleteFileRequest={this.removeFileFromProject}
                     setFileActive={this.setFileAsActive}
                     saveProjectFile={this.saveProjectFile}
-                    saveCurrentProject={this.saveCurrentProject}
-                    downloadCurrentProject={this.downloadCurrentProject}
+                    saveCurrentProject={() => this.saveProject()}
+                    downloadCurrentProject={() => this.downloadProject()}
                     openProjectSettings={() =>
                       this.openDialog('projectSettingsDialog')
                     }
@@ -679,6 +696,15 @@ class App extends Component {
                     setHarmonyPanelWidth={this.setHarmonyPanelWidth}
                     harmonyPanelState={this.state.harmonyPanel}
                     openSnackbar={this.openSnackbar}
+                  />
+                }
+                userPage={
+                  <UserPage 
+                    user={user}
+                    drive={drive}
+                    newProject={this.newProject}
+                    openProject={this.openProject}
+                    downloadProject={this.downloadProject}
                   />
                 }
                 bar={
@@ -739,6 +765,7 @@ class App extends Component {
                     handleSave: (p) => {
                       this.closeDialog('projectSettingsDialog')
                       this.setState({ currentProject: p })
+                      this.saveProject(p)
                     },
                   },
 
@@ -879,19 +906,24 @@ class App extends Component {
                       roles: value || [],
                     })
                   })
+                  
+                  let pathArray = window.location.pathname.split('/')
+                  let projectUID = (pathArray[pathArray.length - 2] === "project") 
+                    ? pathArray[pathArray.length - 1] 
+                    : data.lastActiveProject
 
-                  if (!data.lastActiveProject) {
-                    var newProject = drive.createProject()
-                    drive.updateProject(newProject)
-                    this.setState({ currentProject: newProject, ready: true })
+                  if (!projectUID) {
+                    this.newProject()
                   } else {
                     drive
-                      .retrieveProject(data.lastActiveProject)
+                      .retrieveProject(projectUID)
                       .then((currentProject) => {
                         this.setState({
                           currentProject: currentProject,
                           ready: true,
                         })
+                      }).catch((_) => {
+                        window.location.pathname = `/not-found`
                       })
                   }
                 })

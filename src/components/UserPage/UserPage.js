@@ -2,11 +2,36 @@ import React, { useState, useEffect } from 'react'
 
 import { useParams, Link } from 'react-router-dom'
 
-import { Grid, Fab, Box } from '@material-ui/core'
+import { 
+  Grid, 
+  GridList, 
+  Fab, 
+  Box, 
+  Card, 
+  CardContent, 
+  Typography, 
+  CardActions, 
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button
+} from '@material-ui/core'
 
 import { makeStyles } from '@material-ui/core/styles'
 
-import { Refresh as RefreshIcon, Home as HomeIcon } from '@material-ui/icons'
+import { format } from 'timeago.js';
+
+import {
+  Refresh as RefreshIcon,
+  Home as HomeIcon,
+  Add as AddIcon,
+  PlayArrow as PlayIcon,
+  GetApp as DownloadIcon,
+  Delete as DeleteIcon,
+} from '@material-ui/icons'
 
 import { firestore } from '../../firebase'
 
@@ -20,15 +45,33 @@ import { ReactComponent as NoDataIllustration } from '../../illustrations/no-dat
 
 const useStyles = makeStyles({
   grid: {
-    margin: 0,
+    padding: "0.5em",
     width: '100%',
   },
+  card: {
+    margin: "1em"
+  },
+  projectButton: {
+    padding: '0.2em',
+    marginTop: '0em',
+    marginLeft: '0em',
+    float: 'right',
+  },
+  fab: {
+    position: 'fixed',
+    bottom: '1.5em',
+    right: '1.5em',
+    float: "right | bottom"
+  }
 })
 
-function UserPage() {
+function UserPage(props) {
   const [loading, setLoading] = useState(true)
   const [user, setUser] = useState(null)
+  const [projects, setProjects] = useState(null)
   const [error, setError] = useState(null)
+  const [deleteSelection, setDeleteSelection] = useState(null)
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const { userId } = useParams()
   const classes = useStyles()
 
@@ -40,6 +83,15 @@ function UserPage() {
         (snapshot) => {
           setLoading(false)
           setUser(snapshot.data())
+          var projectsList = []
+          props.drive
+            .getProjectList()
+            .then((projectsSnapshot) => {
+              projectsSnapshot.forEach((p) => {
+                projectsList.push(p.data());
+              })
+              setProjects(projectsList)
+            })
         },
         (error) => {
           setLoading(false)
@@ -104,12 +156,96 @@ function UserPage() {
     )
   }
 
+  const deleteProject = (project) => {
+    if (user) {
+      var projectRemoved = projects.filter(function(value, index, arr){ 
+        return value.uid !== project.uid;
+      });
+      props.drive.deleteProject(project.uid, ((projectRemoved.length > 0) ? projectRemoved[0].uid : ""))
+      
+      setProjects(projectRemoved)
+    }
+  }
+
   return (
-    <EmptyState
-      image={<NoDataIllustration />}
-      title="No profile."
-      description="The user hasn‘t setup their profile."
-    />
+    <Box mt={8}>
+      <GridList className={classes.grid} cols={4} cellHeight={160}>
+        {projects && projects.map((project) => (
+          <Card className={classes.card} key={project.uid}>
+            <CardContent>
+              <Typography color="textSecondary" gutterBottom>
+                {format(project.lastUpdated)}
+              </Typography>
+              <Typography variant="h5" component="h2">
+                {project.name}
+              </Typography>
+              <Typography color="textSecondary">
+                {project.files.length} {(project.files.length === 1) ? "file" : "files"}
+              </Typography>
+            </CardContent>
+            <CardActions style={{ float: "right" }}>
+              <IconButton
+                className={classes.projectButton}
+                onClick={() => {
+                  window.location.pathname = `/project/${project.uid}`
+                }}
+              >
+                <PlayIcon fontSize="small" />
+              </IconButton>
+              <IconButton
+                className={classes.projectButton}
+                onClick={() => props.downloadProject(project)}
+              >
+                <DownloadIcon fontSize="small" />
+              </IconButton>
+              <IconButton
+                className={classes.projectButton}
+                onClick={() => {
+                  setDeleteSelection(project)
+                  setOpenDeleteDialog(true)
+                }}
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </CardActions>
+          </Card>
+        ))}
+      </GridList>
+      <Fab className={classes.fab} color="primary" aria-label="add" onClick={() => {
+        var newProject = props.drive.createProject()
+        props.drive.updateProject(newProject).then(() => {
+          window.location.pathname = `/project/${newProject.uid}`
+        })
+      }}>
+        <AddIcon />
+      </Fab>
+      {deleteSelection && (
+        <Dialog
+          open={openDeleteDialog}
+          onClose={() => setOpenDeleteDialog(false)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">{`Delete ${deleteSelection.name}?`}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to delete this project?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenDeleteDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={() => {
+                deleteProject(deleteSelection)
+                setOpenDeleteDialog(false)
+              }} autoFocus>
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+    </Box>
   )
 }
 

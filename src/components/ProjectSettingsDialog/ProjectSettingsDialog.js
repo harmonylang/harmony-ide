@@ -89,7 +89,7 @@ class ProjectSettingsDialog extends Component {
                     autoWidth
                   >
                     {project.files.map((t) => (
-                      <MenuItem value={t.name}>{t.name}</MenuItem>
+                      <MenuItem value={t.name} key={t.name}>{t.name}</MenuItem>
                     ))}
                   </Select>
                 </FormControl>
@@ -136,8 +136,8 @@ class ProjectSettingsDialog extends Component {
               let p = project
               p.entryFile = this.state.entryFile
               p.name = this.state.projectTitle
-              p.settings.alwaysEntry = this.state.alwaysEntry
-              p.settings.compilerOptions = this.state.compilerOptions
+              p.settings.alwaysEntry = (this.state.alwaysEntry) ? this.state.alwaysEntry : false
+              p.settings.compilerOptions = (this.state.compilerOptions) ? this.state.compilerOptions : ""
               handleSave(p)
             }}
             color="primary"
